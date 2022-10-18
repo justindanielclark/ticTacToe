@@ -1,3 +1,4 @@
+import gameGrid from './components/gameGrid.js'
 import gameBoard2d from './models/gameBoard2d.js';
 import player from './models/player.js';
 
@@ -9,6 +10,8 @@ const App = (() => {
     })();
     const view = (() => {
         const _root = document.querySelector('#ticTacToe');
+        const _gameGrid = gameGrid;
+        _gameGrid.init(_root);
         return {}
     })();
     const _checkForWinner = (x,y,board) => {
