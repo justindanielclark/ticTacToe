@@ -19,13 +19,9 @@ let App = (() => {
             console.log(getCurrentPlayer())
         }
         return {
-            //Expects ()
             getCurrentPlayer,
-            //Expects (location [x,y])
             getTile: _board.getTile,
-            //Expects (location [x,y], val 'X' || 'Y')
             setTile: _board.setTile,
-            //Expects ()
             toggleCurrentPlayer
         }
     })();

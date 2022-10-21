@@ -27,7 +27,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: start;
+  align-items: flex-start;
 }
 #ticTacToe .gameHeader .title {
   display: block;
@@ -60,23 +60,21 @@ body {
   box-shadow: 0.5rem 0.5rem #1e293b;
 }
 #ticTacToe .gameHeader .headerContainer {
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  align-items: start;
+  align-items: flex-start;
   align-self: center;
   padding: 1.5rem 2.15rem;
   width: 100%;
   height: 100%;
   background-color: #334155;
-  color: #f8fafc;
-  font-size: 2rem;
-  font-weight: bold;
   border-radius: 1rem;
   border: none;
   box-shadow: 0.25rem 0.25rem #475569;
-  -webkit-animation: transitionAnimationWidth 0.28875s ease-in-out, transitionAnimationHeight 0.35s ease-in-out;
-          animation: transitionAnimationWidth 0.28875s ease-in-out, transitionAnimationHeight 0.35s ease-in-out;
+  -webkit-animation: transitionAnimationWidth 8.53875s ease-in-out, transitionAnimationHeight 10.35s ease-in-out;
+          animation: transitionAnimationWidth 8.53875s ease-in-out, transitionAnimationHeight 10.35s ease-in-out;
 }
 @-webkit-keyframes transitionAnimationWidth {
   0% {
@@ -110,9 +108,166 @@ body {
     height: 100%;
   }
 }
-#ticTacToe .gameHeader .headerContainer .gameOptions {
+#ticTacToe .gameHeader .headerContainer .heading {
+  flex: 0 0 auto;
+  margin-bottom: 1rem;
+  color: #f8fafc;
+  font-size: 2rem;
+  font-weight: bold;
+}
+#ticTacToe .gameHeader .headerContainer .option {
+  flex: 1 0 auto;
+  padding: 1rem;
+  border-radius: 10px;
   color: #0f172a;
   background-color: #cbd5e1;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr;
+}
+#ticTacToe .gameHeader .headerContainer .option h3 {
+  grid-area: 1/1/2/3;
+  position: relative;
+  text-align: center;
+  font-size: 1.75rem;
+  font-weight: bold;
+}
+#ticTacToe .gameHeader .headerContainer .option h3::after {
+  position: absolute;
+  content: "";
+  left: 0;
+  bottom: 7%;
+  width: 100%;
+  border: 1px solid #0f172a;
+}
+#ticTacToe .gameHeader .headerContainer .option .svgContainer {
+  grid-area: 2/1/3/2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#ticTacToe .gameHeader .headerContainer .option .svgContainer svg {
+  height: 8rem;
+}
+#ticTacToe .gameHeader .headerContainer .option .optionsForm {
+  grid-area: 2/2/3/3;
+  display: flex;
+  flex-direction: column;
+}
+#ticTacToe .gameHeader .headerContainer .option .optionsForm input[type=range] {
+  -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+  width: 100%; /* Specific width is required for Firefox. */
+  background: transparent; /* Otherwise white in Chrome */
+}
+#ticTacToe .gameHeader .headerContainer .option .optionsForm input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 1.5rem;
+  width: 1.5rem;
+  background: #1e293b;
+  cursor: pointer;
+  margin-top: -0.5rem;
+  box-shadow: 1px 1px 1px #0f172a, 0px 0px 1px #0f172a; /* Add cool effects to your sliders! */
+  -webkit-clip-path: polygon(0 0, 50% 100%, 100% 0);
+          clip-path: polygon(0 0, 50% 100%, 100% 0);
+}
+#ticTacToe .gameHeader .headerContainer .option .optionsForm input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 8.4px;
+  cursor: pointer;
+  box-shadow: 1px 1px 1px #0f172a, 0px 0px 1px #0f172a;
+  background: #64748b;
+  border-radius: 1.3px;
+  border: 0.2px solid #0f172a;
+}
+#ticTacToe .gameHeader .headerContainer .option .optionsForm input[type=range]::-webkit-slider-runnable-track[value="0"] {
+  background: green;
+}
+#ticTacToe .gameHeader .headerContainer .option .optionsForm input[type=range]::-moz-range-thumb {
+  box-shadow: 1px 1px 1px #0f172a, 0px 0px 1px #0f172a;
+  border: 1px solid #0f172a;
+  height: 36px;
+  width: 16px;
+  border-radius: 3px;
+  background: #f8fafc;
+  cursor: pointer;
+}
+#ticTacToe .gameHeader .headerContainer .option .optionsForm input[type=range]::-moz-range-track {
+  width: 100%;
+  height: 8.4px;
+  cursor: pointer;
+  box-shadow: 1px 1px 1px #0f172a, 0px 0px 1px #0f172a;
+  background: #64748b;
+  border-radius: 1.3px;
+  border: 0.2px solid #0f172a;
+}
+#ticTacToe .gameHeader .headerContainer .option .optionsForm input[type=range]::-ms-thumb {
+  box-shadow: 1px 1px 1px #0f172a, 0px 0px 1px #0f172a;
+  border: 1px solid #0f172a;
+  height: 36px;
+  width: 16px;
+  border-radius: 3px;
+  background: #f8fafc;
+  cursor: pointer;
+}
+#ticTacToe .gameHeader .headerContainer .option .optionsForm input[type=range]::-ms-track {
+  width: 100%;
+  height: 8.4px;
+  cursor: pointer;
+  background: transparent;
+  border-color: transparent;
+  border-width: 16px 0;
+  color: transparent;
+}
+#ticTacToe .gameHeader .headerContainer .option .optionsForm input[type=range]::-ms-fill-lower {
+  background: #94a3b8;
+  border: 0.2px solid #0f172a;
+  border-radius: 2.6px;
+  box-shadow: 1px 1px 1px #0f172a, 0px 0px 1px #0f172a;
+}
+#ticTacToe .gameHeader .headerContainer .option .optionsForm input[type=range]:focus::-ms-fill-lower {
+  background: #64748b;
+}
+#ticTacToe .gameHeader .headerContainer .option .optionsForm input[type=range]::-ms-fill-upper {
+  background: #64748b;
+  border: 0.2px solid #0f172a;
+  border-radius: 2.6px;
+  box-shadow: 1px 1px 1px #0f172a, 0px 0px 1px #0f172a;
+}
+#ticTacToe .gameHeader .headerContainer .option .optionsForm input[type=range]:focus::-ms-fill-upper {
+  background: #94a3b8;
+}
+#ticTacToe .gameHeader .headerContainer .option .optionsForm input[type=range]:focus {
+  outline: none; /* Removes the blue border. You should probably do some kind of focus styling for accessibility reasons though. */
+}
+#ticTacToe .gameHeader .headerContainer .option .optionsForm input[type=range]::-ms-track {
+  width: 100%;
+  cursor: pointer;
+  /* Hides the slider so custom styles can be added */
+  background: transparent;
+  border-color: transparent;
+  color: transparent;
+}
+#ticTacToe .gameHeader .headerContainer .option .optionsForm .rangeOptions {
+  display: flex;
+  justify-content: space-between;
+}
+#ticTacToe .gameHeader .headerContainer .option .optionsForm .rangeOptions p {
+  width: 33%;
+}
+#ticTacToe .gameHeader .headerContainer .option .optionsForm .rangeOptions p:nth-of-type(1) {
+  text-align: left;
+}
+#ticTacToe .gameHeader .headerContainer .option .optionsForm .rangeOptions p:nth-of-type(2) {
+  text-align: center;
+}
+#ticTacToe .gameHeader .headerContainer .option .optionsForm .rangeOptions p:nth-of-type(3) {
+  text-align: right;
+}
+#ticTacToe .gameHeader .headerContainer hr {
+  width: 80%;
+  border: 2px solid #f8fafc;
+  margin: 1rem auto;
 }
 #ticTacToe #gameGrid {
   position: relative;
