@@ -1,20 +1,83 @@
-import gameGrid from './components/gameGrid.js'
+import gameGrid from './components/gameGrid.js';
+import gameHeader from './components/gameHeader.js';
 import gameBoard2d from './models/gameBoard2d.js';
 import player from './models/player.js';
+import SubscriberPublisherController from './utilities/SubscriberPublisherController.js';
 
-const App = (() => {
+let App = (() => {
+    //MODEL
     const model = (() => {
         const _board = gameBoard2d(3,3);
-        const _players = [player('John', true, 'X'), player('Patricia', true, 'O')];
-        return {}
+        const _players = [player('John', 'X', true), player('Patricia', 'O', true)];
+        let currentPlayer = 0;
+        function getCurrentPlayer(){
+            return _players[currentPlayer];
+        }
+        function toggleCurrentPlayer(){
+            currentPlayer++;
+            currentPlayer %= 2;
+            console.log(getCurrentPlayer())
+        }
+        return {
+            //Expects ()
+            getCurrentPlayer,
+            //Expects (location [x,y])
+            getTile: _board.getTile,
+            //Expects (location [x,y], val 'X' || 'Y')
+            setTile: _board.setTile,
+            //Expects ()
+            toggleCurrentPlayer
+        }
     })();
+    //VIEW
     const view = (() => {
         const _root = document.querySelector('#ticTacToe');
-        const _gameGrid = gameGrid;
-        _gameGrid.init(_root);
-        return {}
+        const _gameHeader = gameHeader(_root);
+        const _gameGrid = gameGrid(_root);
+        _gameHeader.initialRender()
+        // _gameGrid.initialRender();
+        // _gameGrid.toggleGridLines();
+        return {
+            getTiles: _gameGrid.getTiles,
+            markTile: _gameGrid.markTile,
+            toggleGridLines: _gameGrid.toggleGridLines,
+        }
     })();
-    const _checkForWinner = (x,y,board) => {
+    //CONTROLLER
+    const SubPub = SubscriberPublisherController();
+    const Subscription = SubPub.subscription;
+    const Publish = SubPub.publish;
+    const EventsList = {
+        tileMarked: 'tileMarked',
+        toggleCurrentPlayer: 'toggleCurrentPlayer'
+    }
+    SubPub.subscriberWrapper(model);
+    SubPub.subscriberWrapper(view);
+    model.subscribe(
+        new Subscription(EventsList.tileMarked, model.setTile, 0),
+        new Subscription(EventsList.toggleCurrentPlayer, model.toggleCurrentPlayer, 0)
+    )
+    view.subscribe(
+        new Subscription(EventsList.tileMarked, view.markTile, 1),
+    )
+    view.getTiles().forEach(tile => {
+        tile.addEventListener('click', ()=>{
+            const {x,y} = {...tile.dataset};
+            if(model.getTile({location: [x,y]}) === null){
+                Publish(
+                    EventsList.tileMarked, 
+                    {location: [x,y], val: model.getCurrentPlayer().team}
+                );
+                Publish(
+                    EventsList.toggleCurrentPlayer
+                )
+            }
+            
+        })
+    })
+
+
+    function checkForWinner(x,y,board){
         //Returns 'X', 'O', null
         let result = checkHorizontal(y);
         if(result){return result}
@@ -42,8 +105,7 @@ const App = (() => {
             return args[0];
         }
     }
-
-
-
-
+    return {}
 })()
+
+window.App = App;

@@ -1,5 +1,6 @@
 * {
   box-sizing: border-box;
+  font-family: "Times New Roman";
 }
 
 body, html {
@@ -9,7 +10,7 @@ body, html {
 body {
   min-height: 100vh;
   width: 100vw;
-  background-color: #123;
+  background-color: #0f172a;
 }
 
 #ticTacToe {
@@ -18,17 +19,290 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-content: center;
+  align-items: center;
+}
+#ticTacToe .gameHeader {
+  width: 40rem;
+  height: 40rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+}
+#ticTacToe .gameHeader .title {
+  display: block;
+  align-self: stretch;
+  color: #f8fafc;
+  font-size: 4rem;
+  font-weight: bolder;
+  border-bottom: 0.25rem solid #94a3b8;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+}
+#ticTacToe .gameHeader .newGameButton {
+  align-self: center;
+  width: 20rem;
+  height: 5rem;
+  background-color: #334155;
+  color: #f8fafc;
+  font-size: 2rem;
+  font-weight: bold;
+  border-radius: 1rem;
+  border: none;
+  box-shadow: 0.25rem 0.25rem #475569;
+  transition: box-shadow ease-in 0.2s;
+}
+#ticTacToe .gameHeader .newGameButton:hover {
+  box-shadow: 0.5rem 0.5rem #1e293b;
+}
+#ticTacToe .gameHeader .newGameButton:active {
+  transform: translate(0.25rem, 0.25rem);
+  box-shadow: 0.5rem 0.5rem #1e293b;
+}
+#ticTacToe .gameHeader .headerContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: start;
+  align-self: center;
+  padding: 1.5rem 2.15rem;
+  width: 100%;
+  height: 100%;
+  background-color: #334155;
+  color: #f8fafc;
+  font-size: 2rem;
+  font-weight: bold;
+  border-radius: 1rem;
+  border: none;
+  box-shadow: 0.25rem 0.25rem #475569;
+  -webkit-animation: transitionAnimationWidth 0.28875s ease-in-out, transitionAnimationHeight 0.35s ease-in-out;
+          animation: transitionAnimationWidth 0.28875s ease-in-out, transitionAnimationHeight 0.35s ease-in-out;
+}
+@-webkit-keyframes transitionAnimationWidth {
+  0% {
+    width: 20rem;
+  }
+  100% {
+    width: 100%;
+  }
+}
+@keyframes transitionAnimationWidth {
+  0% {
+    width: 20rem;
+  }
+  100% {
+    width: 100%;
+  }
+}
+@-webkit-keyframes transitionAnimationHeight {
+  0% {
+    height: 5rem;
+  }
+  100% {
+    height: 100%;
+  }
+}
+@keyframes transitionAnimationHeight {
+  0% {
+    height: 5rem;
+  }
+  100% {
+    height: 100%;
+  }
+}
+#ticTacToe .gameHeader .headerContainer .gameOptions {
+  color: #0f172a;
+  background-color: #cbd5e1;
 }
 #ticTacToe #gameGrid {
+  position: relative;
+  width: 30rem;
+  height: 30rem;
+  padding: 2rem;
+  box-shadow: 0.25rem 0.25rem rgba(0, 0, 0, 0.35);
+  background-color: rgba(255, 255, 255, 0.1);
+  border-top: 0.2rem solid rgba(255, 255, 255, 0.2);
+  border-left: 0.2rem solid rgba(255, 255, 255, 0.2);
+}
+#ticTacToe #gameGrid #gameGridMask {
+  pointer-events: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 100;
+}
+#ticTacToe #gameGrid #gameGridMask .gridLine {
+  position: absolute;
+  background-color: white;
+  box-shadow: 0.25rem 0.25rem rgba(0, 0, 0, 0.35);
+}
+#ticTacToe #gameGrid #gameGridMask .gridLine.horizontal {
+  width: 0;
+  height: 0.5rem;
+  transform: translateY(-50%);
+  transition: width 0.5s;
+}
+#ticTacToe #gameGrid #gameGridMask .gridLine.horizontal.expanded {
+  width: 100%;
+  -webkit-animation: expandedHorizontal 0.35s ease-in 0s;
+          animation: expandedHorizontal 0.35s ease-in 0s;
+}
+#ticTacToe #gameGrid #gameGridMask .gridLine.horizontal.leftToRight {
+  left: 0;
+}
+#ticTacToe #gameGrid #gameGridMask .gridLine.horizontal.rightToLeft {
+  right: 0;
+}
+#ticTacToe #gameGrid #gameGridMask .gridLine.horizontal.first {
+  top: 33.3%;
+}
+#ticTacToe #gameGrid #gameGridMask .gridLine.horizontal.second {
+  top: 66.6%;
+}
+@-webkit-keyframes expandedHorizontal {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+@keyframes expandedHorizontal {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+#ticTacToe #gameGrid #gameGridMask .gridLine.vertical {
+  height: 0%;
+  width: 0.5rem;
+  transform: translateX(-50%);
+  transition: height 0.5s;
+}
+#ticTacToe #gameGrid #gameGridMask .gridLine.vertical.expanded {
+  height: 100%;
+  -webkit-animation: expandedVertical 0.35s ease-in 0s;
+          animation: expandedVertical 0.35s ease-in 0s;
+}
+#ticTacToe #gameGrid #gameGridMask .gridLine.vertical.topToBottom {
+  top: 0;
+}
+#ticTacToe #gameGrid #gameGridMask .gridLine.vertical.bottomToTop {
+  bottom: 0;
+}
+#ticTacToe #gameGrid #gameGridMask .gridLine.vertical.first {
+  left: 33.3%;
+}
+#ticTacToe #gameGrid #gameGridMask .gridLine.vertical.second {
+  left: 66.6%;
+}
+@-webkit-keyframes expandedVertical {
+  0% {
+    height: 0%;
+  }
+  100% {
+    height: 100%;
+  }
+}
+@keyframes expandedVertical {
+  0% {
+    height: 0%;
+  }
+  100% {
+    height: 100%;
+  }
+}
+#ticTacToe #gameGrid #gameGridField {
+  position: relative;
   width: 100%;
   height: 100%;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
-  background-color: rgba(255, 255, 255, 0.2);
+  gap: 0.5rem;
 }
-#ticTacToe #gameGrid .tile.inactive:hover {
+#ticTacToe #gameGrid #gameGridField .tile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#ticTacToe #gameGrid #gameGridField .tile svg {
+  fill: white;
+  padding: 0.5rem;
+  width: 0%;
+  height: 0%;
+}
+#ticTacToe #gameGrid #gameGridField .tile svg.active {
+  width: 80%;
+  height: 80%;
+  -webkit-animation: activeAnimation 0.35s ease-in 0s;
+          animation: activeAnimation 0.35s ease-in 0s;
+}
+#ticTacToe #gameGrid #gameGridField .tile svg.inactive {
+  -webkit-animation: inactiveAnimation 0.35s ease-in 0s;
+          animation: inactiveAnimation 0.35s ease-in 0s;
+}
+@-webkit-keyframes activeAnimation {
+  0% {
+    width: 0%;
+    height: 0%;
+  }
+  80% {
+    width: 90%;
+    height: 90%;
+  }
+  100% {
+    width: 80%;
+    height: 80%;
+  }
+}
+@keyframes activeAnimation {
+  0% {
+    width: 0%;
+    height: 0%;
+  }
+  80% {
+    width: 90%;
+    height: 90%;
+  }
+  100% {
+    width: 80%;
+    height: 80%;
+  }
+}
+@-webkit-keyframes inactiveAnimation {
+  0% {
+    width: 80%;
+    height: 80%;
+  }
+  80% {
+    width: 90%;
+    height: 90%;
+  }
+  100% {
+    width: 0%;
+    height: 0%;
+  }
+}
+@keyframes inactiveAnimation {
+  0% {
+    width: 80%;
+    height: 80%;
+  }
+  80% {
+    width: 90%;
+    height: 90%;
+  }
+  100% {
+    width: 0%;
+    height: 0%;
+  }
+}
+#ticTacToe #gameGrid #gameGridField .tile.inactive:hover {
   -webkit-animation: hoverAnimation 1s ease-in 0s infinite;
           animation: hoverAnimation 1s ease-in 0s infinite;
 }
@@ -37,7 +311,7 @@ body {
     background-color: rgba(255, 255, 255, 0);
   }
   50% {
-    background-color: rgba(255, 255, 255, 0.025);
+    background-color: rgba(255, 255, 255, 0.05);
   }
   100% {
     background-color: rgba(255, 255, 255, 0);
@@ -48,39 +322,9 @@ body {
     background-color: rgba(255, 255, 255, 0);
   }
   50% {
-    background-color: rgba(255, 255, 255, 0.025);
+    background-color: rgba(255, 255, 255, 0.05);
   }
   100% {
     background-color: rgba(255, 255, 255, 0);
   }
-}
-#ticTacToe #gameGrid .tile:nth-of-type(-n+2) {
-  border-top: none;
-  border-right: 0.2rem solid rgba(255, 255, 255, 0.4);
-  border-bottom: 0.2rem solid rgba(255, 255, 255, 0.4);
-  border-left: none;
-}
-#ticTacToe #gameGrid .tile:nth-of-type(9n-6) {
-  border-top: none;
-  border-right: none;
-  border-bottom: 0.2rem solid rgba(255, 255, 255, 0.4);
-  border-left: none;
-}
-#ticTacToe #gameGrid .tile:nth-child(n+4):nth-child(-n+5) {
-  border-top: none;
-  border-right: 0.2rem solid rgba(255, 255, 255, 0.4);
-  border-bottom: 0.2rem solid rgba(255, 255, 255, 0.4);
-  border-left: none;
-}
-#ticTacToe #gameGrid .tile:nth-of-type(9n-3) {
-  border-top: none;
-  border-right: none;
-  border-bottom: 0.2rem solid rgba(255, 255, 255, 0.4);
-  border-left: none;
-}
-#ticTacToe #gameGrid .tile:nth-child(n+7):nth-child(-n+8) {
-  border-top: none;
-  border-right: 0.2rem solid rgba(255, 255, 255, 0.4);
-  border-bottom: none;
-  border-left: none;
 }/*# sourceMappingURL=index.css.map */

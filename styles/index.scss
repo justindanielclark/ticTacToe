@@ -1,8 +1,23 @@
-$grid-border-color: rgba(255,255,255,.4);
-$grid-border-size: .2rem;
+$color-0: #0f172a;
+$color-1: #1e293b;
+$color-2: #334155;
+$color-3: #475569;
+$color-4: #64748b;
+$color-5: #94a3b8;
+$color-6: #cbd5e1;
+$color-7: #e2e8f0;
+$color-8: #f1f5f9;
+$color-9: #f8fafc;
+
+$gridLine-animation-speed: .35s;
+$gridLine-animation-timing: ease-in;
+$gridLine-animation-delay: 0s;
+
+$headerContainer-animation-transition-speed: .35s;
 
 * {
     box-sizing: border-box;
+    font-family: "Times New Roman";
 }
 body, html {
     height: 100%;
@@ -10,10 +25,7 @@ body, html {
 body {
     min-height: 100vh;
     width: 100vw;
-    background-color: #123;
-    // display: flex;
-    // justify-content: center;
-    // align-content: stretch;
+    background-color: $color-0;
 }
 #ticTacToe {
     height: 100%;
@@ -21,60 +33,221 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-content: center;
+    align-items: center;
+    .gameHeader {
+        width: 40rem;
+        height: 40rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: start;
+        .title {
+            display: block;
+            align-self: stretch;
+            color: $color-9;
+            font-size: 4rem;
+            font-weight: bolder;
+            border-bottom: .25rem solid $color-5;
+            margin-bottom: 1.5rem;
+            padding-bottom: .5rem;
+        }
+        .newGameButton {
+            align-self: center;
+            width: 20rem;
+            height: 5rem;
+            background-color: $color-2;
+            color: $color-9;
+            font-size: 2rem;
+            font-weight: bold;
+            border-radius: 1rem;
+            border: none;
+            box-shadow: .25rem .25rem $color-3;
+            transition: box-shadow ease-in .2s;
+            &:hover {
+                box-shadow: .5rem .5rem $color-1;
+            }
+            &:active {
+                transform: translate(.25rem, .25rem);
+                box-shadow: .5rem .5rem $color-1;
+            }
+        }
+        .headerContainer {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: start;
+            align-self: center;
+            padding: 1.5rem 2.15rem;
+            width: 100%;
+            height: 100%;
+            background-color: $color-2;
+            color: $color-9;
+            font-size: 2rem;
+            font-weight: bold;
+            border-radius: 1rem;
+            border: none;
+            box-shadow: .25rem .25rem $color-3;
+            animation: transitionAnimationWidth calc(.825 * $headerContainer-animation-transition-speed) ease-in-out, transitionAnimationHeight $headerContainer-animation-transition-speed ease-in-out;
+            @keyframes transitionAnimationWidth {
+                0% {
+                    width: 20rem;
+                }
+                100% {
+                    width: 100%;
+                }
+                
+            }
+            @keyframes transitionAnimationHeight {
+                0% {
+                    height: 5rem;
+                }
+                100% {
+                    height: 100%;
+                }
+                
+            }
+            .gameOptions {
+                color: $color-0;
+                background-color: $color-6;
+            }
+        }
+    }
     #gameGrid {
-        width: 100%;
-        height: 100%;
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        grid-template-rows: repeat(3, 1fr);
-        background-color: rgba(255,255,255,.2);
-        .tile {
-            &.inactive {
-                &:hover {
-                    animation: hoverAnimation 1s ease-in 0s infinite;
+        position: relative;
+        width: 30rem;
+        height: 30rem;
+        padding: 2rem;
+        box-shadow: .25rem .25rem rgba(0,0,0,.35);
+        background-color: rgba(255,255,255,.1);
+        border-top: .2rem solid rgba(255,255,255,.2);
+        border-left: .2rem solid rgba(255,255,255,.2);
+        #gameGridMask {
+            pointer-events: none;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            .gridLine {
+                position: absolute;
+                background-color: white;
+                box-shadow: .25rem .25rem rgba(0,0,0,.35);
+                &.horizontal {
+                    width: 0;
+                    height: .5rem;
+                    transform: translateY(-50%);
+                    transition: width .5s;
+                    &.expanded {
+                        width: 100%;
+                        animation: expandedHorizontal $gridLine-animation-speed $gridLine-animation-timing $gridLine-animation-delay;
+                    }
+                    &.leftToRight {
+                        left: 0;
+                    }
+                    &.rightToLeft {
+                        right: 0;
+                    }
+                    &.first {
+                        top: 33.3%;
+                    }
+                    &.second {
+                        top: 66.6%;
+                    }
+                    @keyframes expandedHorizontal {
+                        0% {
+                            width: 0%;
+                        }
+                        100% {
+                            width: 100%;
+                        }
+                    }
                 }
-                @keyframes hoverAnimation {
-                    0%   {background-color: rgba(255,255,255,0);}
-                    50%  {background-color: rgba(255,255,255, .025);}
-                    100% {background-color: rgba(255,255,255,0);}
+                &.vertical {
+                    height: 0%;
+                    width: .5rem;
+                    transform: translateX(-50%);
+                    transition: height .5s;
+                    &.expanded {
+                        height: 100%;
+                        animation: expandedVertical $gridLine-animation-speed $gridLine-animation-timing $gridLine-animation-delay;
+                    }
+                    &.topToBottom{
+                        top: 0;
+                    }
+                    &.bottomToTop{
+                        bottom: 0;
+                    }
+                    &.first {
+                        left: 33.3%;
+                    }
+                    &.second {
+                        left: 66.6%;
+                    }
+                    @keyframes expandedVertical {
+                        0% {
+                            height: 0%;
+                        }
+                        100% {
+                            height: 100%;
+                        }
+                    }
                 }
             }
-            
-            //Tiles 1, 2
-            &:nth-of-type(-n+2){
-                border-top: none;
-                border-right: $grid-border-size solid $grid-border-color;
-                border-bottom: $grid-border-size solid $grid-border-color;
-                border-left: none;
-            }
-            //Tile 3
-            &:nth-of-type(9n-6){
-                border-top: none;
-                border-right: none;
-                border-bottom: $grid-border-size solid $grid-border-color;
-                border-left: none;
-            }
-            //Tiles 4, 5
-            &:nth-child(n+4):nth-child(-n+5){
-                border-top: none;
-                border-right: $grid-border-size solid $grid-border-color;
-                border-bottom: $grid-border-size solid $grid-border-color;
-                border-left: none;
-            }
-            //Tile 6
-            &:nth-of-type(9n-3){
-                border-top: none;
-                border-right: none;
-                border-bottom: $grid-border-size solid $grid-border-color;
-                border-left: none;
-            }
-            //Tiles 7, 8
-            &:nth-child(n+7):nth-child(-n+8){
-                border-top: none;
-                border-right: $grid-border-size solid $grid-border-color;
-                border-bottom: none;
-                border-left: none;
+        }
+        #gameGridField {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: .5rem;
+            .tile {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                svg {
+                    fill: white;
+                    padding: .5rem;
+                    width: 0%;
+                    height: 0%;
+                    &.active {
+                        width: 80%;
+                        height: 80%;
+                        animation: activeAnimation .35s ease-in 0s;
+                    }
+                    &.inactive {
+                        animation: inactiveAnimation .35s ease-in 0s;
+                    }
+                    @keyframes activeAnimation {
+                        0% {width: 0%; height:0%;}
+                        80% {width: 90%; height: 90%;}
+                        100% {width: 80%; height: 80%;}
+                    }
+                    @keyframes inactiveAnimation {
+                        0% {width: 80%; height:80%;}
+                        80% {width: 90%; height: 90%;}
+                        100% {width: 0%; height: 0%;}
+                    }
+    
+                }
+                &.inactive {
+                    &:hover {
+                        animation: hoverAnimation 1s ease-in 0s infinite;
+                    }
+                    @keyframes hoverAnimation {
+                        0%   {
+                            background-color: rgba(255,255,255,0);
+                        }
+                        50%  {
+                            background-color: rgba(255,255,255, .05);
+                        }
+                        100% {
+                            background-color: rgba(255,255,255,0);
+                        }
+                    }
+                }
             }
         }
     }
