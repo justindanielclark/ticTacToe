@@ -68,7 +68,6 @@ let App = (() => {
                     EventsList.toggleCurrentPlayer
                 )
             }
-            
         })
     })
 
