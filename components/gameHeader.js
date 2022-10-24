@@ -27,7 +27,6 @@ const gameHeader = (root) => {
   _headerContainer.appendChild(_createComputerOption());
 
   function initialRender(){
-    console.log('sup');
     _self.appendChild(_title);
     _self.appendChild(_newGameButton);
     root.appendChild(_self);

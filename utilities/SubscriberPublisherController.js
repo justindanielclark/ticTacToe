@@ -1,4 +1,5 @@
 const SubscriberPublisherController = (()=>{
+  const _subscriptions = new subscriptionList();
   function subscription(eventName, func, priority, excludeSelf = true){
     this.eventName = eventName;
     this.func = func;
@@ -31,8 +32,6 @@ const SubscriberPublisherController = (()=>{
         return this.list[eventName];
       }
     }
-  const _subscriptions = new subscriptionList();
-
   function  publish(eventName, passedVal = {}){ 
     const eventsList = _subscriptions.getSubscriptions(eventName);
     eventsList.forEach(subscription => { 
@@ -46,9 +45,8 @@ const SubscriberPublisherController = (()=>{
     })
   }
   function unsubscribe(...subscriptions){
-
+    //TODO
   }
-  
   function subscriberWrapper(object){ 
     object.subscribe = _subscribe;
     object.subscriptions = new subscriptionList();
