@@ -1,22 +1,22 @@
-const gameGrid = (root) => {
+const gameGrid = (root, props) => {
+  const _id = 'gameGrid';
   const _gridLines = [];
   const _tiles = [[],[],[]];
   let _activeTiles = 0;
   let _gridExpanded = false;
 
-  function initialRender(){
+  function create(){
     const _createGridLine = (orientation, placement, direction) => {
       const gridLine = document.createElement('div');
       gridLine.classList.add('gridLine', orientation, placement, direction);
       return gridLine;
     }
     const _self = document.createElement('div');
-      _self.id = 'gameGrid';
+    _self.id = _id;
     const _mask = document.createElement('div');
       _mask.id = 'gameGridMask'
     const _gameField = document.createElement('div');
       _gameField.id = 'gameGridField'
-    root.appendChild(_self);
     _gameField.appendChild(_mask);
     _self.appendChild(_gameField);
     _gridLines.push(_createGridLine('vertical', 'first', 'topToBottom'))
@@ -35,6 +35,10 @@ const gameGrid = (root) => {
           _gameField.appendChild(tile); 
       }
     }
+    return _self;
+  }
+  function destroy(){
+    root.removeChild(root.querySelector(`#${_id}`))
   }
   function toggleGridLines(){
     _gridExpanded = !_gridExpanded;
@@ -63,7 +67,7 @@ const gameGrid = (root) => {
   function getTiles(){
     return [..._tiles[0], ..._tiles[1], ..._tiles[2]];
   }
-  function markTile({location, val}){
+  function markTile(location, val){
     const [x,y] = location;
     const tile = _tiles[x][y];
     const mark = (val === 'X' ? _createCross() : _createCircle())
@@ -71,7 +75,7 @@ const gameGrid = (root) => {
     tile.classList.toggle('inactive');
     _activeTiles++;
   }
-  function removeMark({location}){
+  function removeMark(location){
     const [x,y] = location;
     const tile = _tiles[x][y]
     const svg = tile.querySelector('.mark');
@@ -84,7 +88,8 @@ const gameGrid = (root) => {
     return svg;
   }
   return {
-    initialRender, 
+    create,
+    destroy,
     toggleGridLines, 
     getTiles,
     markTile,

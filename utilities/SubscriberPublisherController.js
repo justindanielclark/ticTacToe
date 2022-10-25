@@ -1,25 +1,24 @@
 const SubscriberPublisherController = (()=>{
-  const _subscriptions = new subscriptionList();
-  function subscription(eventName, func, priority, excludeSelf = true){
+  function Subscription(eventName, func, {priority, excludesSelf} = {priority: 0, excludesSelf: true}){
     this.eventName = eventName;
     this.func = func;
-    this.priority = priority;
-    this.excludeSelf = excludeSelf;
+    this.priority = priority === undefined ? 0 : priority;
+    this.excludeSelf = excludesSelf === undefined ? true : excludesSelf;
   }
-  function subscriptionList(){
+  function SubscriptionList(){
     this.list = {
       //eventName: [subscription, subscription]
       //eventName2: [subscription, subscription, subscription]
     }
   }
-    subscriptionList.prototype = {
+    SubscriptionList.prototype = {
       addSubscription: function(subscription){
         const {eventName} = subscription;
         if(this.list[eventName] instanceof Array){
           this.list[eventName].push(subscription);
           this.list[eventName].sort((a,b) => a.priority-b.priority);
         } else {
-          this.list[eventName] =  [subscription];
+          this.list[eventName] = [subscription];
         }
       },
       removeSubscription: function(subscription){
@@ -32,33 +31,38 @@ const SubscriberPublisherController = (()=>{
         return this.list[eventName];
       }
     }
-  function  publish(eventName, passedVal = {}){ 
+  function publish(eventName, passedVal = {}){ 
     const eventsList = _subscriptions.getSubscriptions(eventName);
-    eventsList.forEach(subscription => { 
-      subscription.func(passedVal);
-    }); 
+    if(eventsList instanceof Array){
+      eventsList.forEach(subscription => { 
+        subscription.func(passedVal);
+      }); 
+    }
   }
   function _subscribe(...subscriptions){
     subscriptions.forEach(subscription => {
       _subscriptions.addSubscription(subscription);
       this.subscriptions.addSubscription(subscription);
-    })
+    });
   }
   function unsubscribe(...subscriptions){
     //TODO
   }
   function subscriberWrapper(object){ 
     object.subscribe = _subscribe;
-    object.subscriptions = new subscriptionList();
+    object.subscriptions = new SubscriptionList();
+    return object;
   } 
   function publisherWrapper(object){ 
-    object.publish =  publish; 
+    object.publish =  publish;
+    return object;
   }
   function wrapper(object){ 
     subscriberWrapper(object);
     publisherWrapper(object);
-  }  
-  return {wrapper, subscription, publish, subscriberWrapper, publisherWrapper} 
+  }
+  const _subscriptions = new SubscriptionList();
+  return {wrapper, Subscription, publish, subscriberWrapper, publisherWrapper} 
  })
 
  export default SubscriberPublisherController;

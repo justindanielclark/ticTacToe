@@ -1,10 +1,9 @@
-import gameGrid from './components/gameGrid.js';
-import gameHeader from './components/gameHeader.js';
+import gameContainer from './components/gameContainer.js';
 import gameBoard2d from './models/gameBoard2d.js';
 import player from './models/player.js';
 import SubscriberPublisherController from './utilities/SubscriberPublisherController.js';
 
-let App = (() => {
+const App = (() => {
     //MODEL
     const model = (() => {
         const _board = gameBoard2d(3,3);
@@ -16,7 +15,6 @@ let App = (() => {
         function toggleCurrentPlayer(){
             currentPlayer++;
             currentPlayer %= 2;
-            console.log(getCurrentPlayer())
         }
         function checkForWinner(x,y,board){
             //Returns 'X', 'O', null
@@ -47,58 +45,37 @@ let App = (() => {
             }
         }
         return {
+            checkForWinner,
             getCurrentPlayer,
             getTile: _board.getTile,
+            printBoard: _board.printBoard,
+            resetBoard: _board.resetBoard,
             setTile: _board.setTile,
-            toggleCurrentPlayer
+            toggleCurrentPlayer,
         }
     })();
     //VIEW
     const view = (() => {
+        //VIEW DECLARATIONS
         const _root = document.querySelector('#ticTacToe');
-        const _gameHeader = gameHeader(_root);
-        const _gameGrid = gameGrid(_root);
-        _gameHeader.initialRender()
-        // _gameGrid.initialRender();
-        // _gameGrid.toggleGridLines();
+        const _title = document.createElement('h1')
+            _title.classList.add('title');
+            _title.innerHTML = '#Tic-Tac-Toe';
+        const _gameContainer = gameContainer(_root);
+
+        //APPEND TO ROOT
+        _root.appendChild(_title);
+        _root.append(_gameContainer.create());
+
         return {
-            getTiles: _gameGrid.getTiles,
-            markTile: _gameGrid.markTile,
-            toggleGridLines: _gameGrid.toggleGridLines,
+            
         }
     })();
-    //CONTROLLER
-    const SubPub = SubscriberPublisherController();
-    const Subscription = SubPub.subscription;
-    const Publish = SubPub.publish;
-    const EventsList = {
-        tileMarked: 'tileMarked',
-        toggleCurrentPlayer: 'toggleCurrentPlayer'
+    
+    
+    return {
+        
     }
-    SubPub.subscriberWrapper(model);
-    SubPub.subscriberWrapper(view);
-    model.subscribe(
-        new Subscription(EventsList.tileMarked, model.setTile, 0),
-        new Subscription(EventsList.toggleCurrentPlayer, model.toggleCurrentPlayer, 0)
-    )
-    view.subscribe(
-        new Subscription(EventsList.tileMarked, view.markTile, 1),
-    )
-    view.getTiles().forEach(tile => {
-        tile.addEventListener('click', ()=>{
-            const {x,y} = {...tile.dataset};
-            if(model.getTile({location: [x,y]}) === null){
-                Publish(
-                    EventsList.tileMarked, 
-                    {location: [x,y], val: model.getCurrentPlayer().team}
-                );
-                Publish(
-                    EventsList.toggleCurrentPlayer
-                )
-            }
-        })
-    })
-    return {};
 })()
 
 window.App = App;
