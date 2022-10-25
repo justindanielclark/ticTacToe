@@ -117,14 +117,14 @@ body {
             }
         }
         &.slidingRight{
-            transform: translateX(100%);
-            animation: slidingLeft .35s ease-in;
+            transform: translateX(0%);
+            animation: slidingRight .35s ease-in;
             @keyframes slidingRight {
                 0% {
-                    transform: translateX(0%);
+                    transform: translateX(-100%);
                 }
                 100% {
-                    transform: translateX(100%);
+                    transform: translateX(0%);
                 }
             }
         }

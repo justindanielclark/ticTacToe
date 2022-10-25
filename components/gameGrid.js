@@ -7,6 +7,17 @@ const gameGrid = (root, Model, Controller) => {
   let _activeTiles = 0;
   let _gridExpanded = false;
 
+  const Subscriber = Controller.subscriberWrapper({self: _self});
+  const Subscription = Controller.Subscription;
+  const Publish = Controller.publish;
+
+  //WIRING
+  Subscriber.subscribe(
+    new Subscription('slideLeft_end', _toggleGridLines),
+    new Subscription('slideRight_end', _destroy),
+  )
+
+  //FUNCTIONS
   function create(){
     const _createGridLine = (orientation, placement, direction) => {
       const gridLine = document.createElement('div');
@@ -38,10 +49,12 @@ const gameGrid = (root, Model, Controller) => {
     }
     return _self;
   }
-  function destroy(){
+  function _destroy(){
+    console.log('GAME GRID HIT');
     root.removeChild(_self)
+    Subscriber.unsubscribeAll();
   }
-  function toggleGridLines(){
+  function _toggleGridLines(){
     _gridExpanded = !_gridExpanded;
     _gridLines.forEach(gridline => gridline.classList.toggle('expanded'))
   }

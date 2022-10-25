@@ -9,8 +9,12 @@ const gameContainer = (root, Model, Controller) => {
   const Subscription = Controller.Subscription;
   
   //WIRING
-  Subscriber.subscribe(new Subscription('slideLeft_start', _handle_slideLeft_start));
-  
+  //Subscriptions
+  Subscriber.subscribe(
+    new Subscription('slideLeft_start', _handle_slideLeft_start),
+    new Subscription('slideRight_start', _handle_slideRight_start)
+  );
+  //Publishes
   _self.addEventListener('animationend', (event) => {
     if(event.animationName === 'slidingLeft'){
       Publish('slideLeft_end', null);
@@ -29,14 +33,18 @@ const gameContainer = (root, Model, Controller) => {
     return _self;
   }
   function _createStartSlide(){
-    _self.appendChild(startSlide(_self, Model, Controller).create());
+    _self.prepend(startSlide(_self, Model, Controller).create());
   }
   function _createGameSlide(){
-    _self.appendChild(gameSlide(_self, Model, Controller).create())
+    _self.append(gameSlide(_self, Model, Controller).create())
   }
   function _handle_slideLeft_start(event){
     _slideLeft();
     _createGameSlide();
+  }
+  function _handle_slideRight_start(event){
+    _slideRight();
+    _createStartSlide();
   }
   function _slideLeft(){
     if(!_self.classList.contains('slidingLeft')){

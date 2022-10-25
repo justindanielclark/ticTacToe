@@ -39,15 +39,18 @@ const SubscriberPublisherController = (()=>{
   function publish(eventName, passedVal = {}){
     if(logging){
       console.log(`%cPublish Event: ${eventName}`, "background: yellow; color: blue; font-size: large");
-      console.log('%cthis', "font-size: large")
-      console.log(this);
+      console.log('%cPassed Value', "font-size: large")
+      console.log(passedVal);
       console.log('%c_subscriptions', "font-size: large")
       console.log(_subscriptions);
     }
     const eventsList = _subscriptions.getSubscriptions(eventName);
     if(eventsList instanceof Array){
       eventsList.forEach(subscription => {
-        if(logging){console.log(subscription.func);}
+        if(logging){
+          console.log(`%cFunc Ran: ${eventName}`, "background: orange; color: blue;");
+          console.log(subscription.func);
+        }
         subscription.func(passedVal);
       }); 
     }
