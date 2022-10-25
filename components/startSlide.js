@@ -1,14 +1,18 @@
 import playerOption from "./playerOption.js";
 import computerOption from "./computerOption.js";
 
-const startSlide = (root, Controller) => {
+const startSlide = (root, Model, Controller) => {
+  //DECLARATIONS
   const _id = 'startSlide';
   const _self = document.createElement('div');
-  const Subscription = Controller.Subscription;
-  const Subscriber = Controller.subscriberWrapper({self: _self});
   const Publish = Controller.publish;
-  Subscriber.subscribe(new Subscription('slidingLeftAnimationEnded', _destroy))
+  const Subscriber = Controller.subscriberWrapper({self: _self});
+  const Subscription = Controller.Subscription;
 
+  //WIRING
+  Subscriber.subscribe(new Subscription('slideLeft_end', _destroy, {priority: 1}))
+
+  //FUNCTIONS
   function create(){
     _self.id = _id;
     _self.classList.add('slide')
@@ -16,20 +20,14 @@ const startSlide = (root, Controller) => {
       _heading.innerText = 'Create New Game';
       _heading.classList.add('heading');
     _self.appendChild(_heading);
-    _self.appendChild(playerOption(_self, Controller).create());
+    _self.appendChild(playerOption(_self, Model, Controller).create());
     _self.appendChild(document.createElement('hr'));
-    _self.appendChild(computerOption(_self, Controller).create());
+    _self.appendChild(computerOption(_self, Model, Controller).create());
     return _self;
   }
   function _destroy(){
-    const SubList = Subscriber.subscriptions.list
-    Object.keys(SubList).forEach(key => {
-      SubList[key].forEach(sub => {
-        Subscriber.unsubscribe(sub);
-      })
-    })
-    Publish('startSlideDestroyed', {})
     root.removeChild(_self);
+    Subscriber.unsubscribeAll();
   }
   return {
     create,

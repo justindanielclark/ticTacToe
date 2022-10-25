@@ -1,12 +1,12 @@
 import gameGrid from "./gameGrid.js";
-const gameSlide = (root, Controller) => {
+const gameSlide = (root, Model, Controller) => {
   const _id = 'gameSlide';
   const _self = document.createElement('div');
 
   function create(){
     _self.id = _id;
     _self.classList.add('slide')
-    _self.appendChild(gameGrid(_self, Controller).create())
+    _self.appendChild(gameGrid(_self, Model).create())
     
     return _self;
   }

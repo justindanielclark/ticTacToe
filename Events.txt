@@ -1,8 +1,0 @@
-1. playersAdded
-  Publisher: Click on start game button in StartSlide and player info filled out in input
-  Subscriber: model.setPlayers, gameContainer.slideLeft, gameContainer.createGameSlide
-  
-2. slidingLeftAnimationEnded
-  Publisher: gameContainer
-  Subscriber: startSlide.destroy, 
-  Effect:

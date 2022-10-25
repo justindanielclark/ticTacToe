@@ -1,46 +1,53 @@
-const playerOption = (root, Controller) => {
+import player from '../models/player.js';
+
+const playerOption = (root, Model, Controller) => {
   //DECLARATIONS
-  const Publish = Controller.publish;
   const _textInputMaxLength = 15;
   const _self = document.createElement('div');
-  
+  const _startGameButton = document.createElement('button');
+  const player1Input = document.createElement('input');
+    Object.assign(player1Input, {
+      type: 'text',
+      id: 'playerX',
+      value: 'John Doe',
+      placeholder: 'John Doe',
+      maxLength: _textInputMaxLength,
+    });
+  const player2Input = document.createElement('input');
+    Object.assign(player2Input, {
+      type: 'text',
+      id: 'playerO',
+      value: 'Jane Doe',
+      placeholder: 'Jane Doe',
+      maxLength: _textInputMaxLength,
+    });
+  const Subscriber = Controller.subscriberWrapper({self: _self});
+  const Subscription = Controller.Subscription;
+  const Publish = Controller.publish;
+
+  //WIRING
+  _startGameButton.addEventListener('click', _handle_startGameButton_Click);
+  Subscriber.subscribe(new Subscription('slideLeft_end', _destroy, {priority: 0}))
+
   //FUNCTIONS
-    // Wired playersAdded Event to Button In Create
   function create(){
     _self.classList.add('option', 'playerOption');
     const optionTitle = document.createElement('h3');
-      optionTitle.classList.add('optionTitle');
-      optionTitle.innerText = 'Player Vs. Player';
+    optionTitle.classList.add('optionTitle');
+    optionTitle.innerText = 'Player Vs. Player';
     const SVG = _createPlayerIconSVG();
     const rightPanel = document.createElement('div');
-      rightPanel.classList.add('rightPanel');
+    rightPanel.classList.add('rightPanel');
     const optionsForm = document.createElement('div');
-      optionsForm.classList.add('optionsForm');
+    optionsForm.classList.add('optionsForm');
     const player1Label = document.createElement('label');
-      player1Label.classList.add('playerNameLabel');
-      player1Label.innerText = 'Player X:';
-    const player1Input = document.createElement('input');
-      Object.assign(player1Input, {
-        type: 'text',
-        id: 'playerX',
-        value: 'John Doe',
-        placeholder: 'John Doe',
-        maxLength: _textInputMaxLength,
-      });
+    player1Label.classList.add('playerNameLabel');
+    player1Label.innerText = 'Player X:';
     const player2Label = document.createElement('label');
-      player2Label.classList.add('playerNameLabel');
-      player2Label.innerText = 'Player O:'
-    const player2Input = document.createElement('input');
-      Object.assign(player2Input, {
-        type: 'text',
-        id: 'playerO',
-        value: 'Jane Doe',
-        placeholder: 'Jane Doe',
-        maxLength: _textInputMaxLength,
-      });
-    const button = document.createElement('button');
-      button.classList.add('optionsButton');
-      button.innerText = 'Start';
+    player2Label.classList.add('playerNameLabel');
+    player2Label.innerText = 'Player O:'
+    _startGameButton.classList.add('optionsButton');
+    _startGameButton.innerText = 'Start';
     _self.appendChild(optionTitle);
     _self.appendChild(SVG);
     _self.appendChild(rightPanel);
@@ -49,22 +56,8 @@ const playerOption = (root, Controller) => {
     optionsForm.appendChild(player1Input);
     optionsForm.appendChild(player2Label);
     optionsForm.appendChild(player2Input);
-    rightPanel.appendChild(button);
-    //WIRING
-    button.addEventListener('click', ()=>{
-      Publish('playersAdded', [
-        {
-          name: player1Input.value,
-          team: 'X',
-          isAI: false
-        },
-        {
-          name: player2Input.value,
-          team: 'O',
-          isAI: false
-        }]
-      )
-    })
+    rightPanel.appendChild(_startGameButton);
+
     return _self;
 
     function _createPlayerIconSVG(){
@@ -79,12 +72,19 @@ const playerOption = (root, Controller) => {
       return SVGPlayer;
     }
   }
-  function destroy(){
+  function _handle_startGameButton_Click(event){
+    Model.setPlayers([
+      player(player1Input.value, 'X', false),
+      player(player2Input.value, 'O', false)
+    ]);
+    Publish('slideLeft_start', null);
+  }
+  function _destroy(){
     root.removeChild(_self);
+    Subscriber.unsubscribeAll();
   }
   return {
     create,
-    destroy,
   }
 }
 export default playerOption;

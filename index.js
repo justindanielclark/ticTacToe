@@ -1,21 +1,22 @@
 import gameContainer from './components/gameContainer.js';
 import gameBoard2d from './models/gameBoard2d.js';
 import player from './models/player.js';
-import SubscriberPublisherController from './utilities/SubscriberPublisherController.js';
+import SubPub from './utilities/SubscriberPublisherController.js';
 
 (() => {
-    //CONTROLLER
-    const Controller = SubscriberPublisherController();
-    //MODEL
-    const Model = ((Controller) => {
-        //SETUP CONTROLLER
-        const Subscriber = Controller.subscriberWrapper({self: 'Model'});
-        const Subscription = Controller.Subscription;
+    const Controller = SubPub();
 
-        //SETUP INTERNALS
+    //MODEL
+    const Model = (() => {
+        const gameStates = Object.freeze({
+            PICKING_MODE: 'PICKING_MODE',
+            SLIDE_TRANSITION_GAME_START: 'SLIDE_TRANSITION_GAME_START',
+            GAME_ACTIVE: 'GAME_ACTIVE',
+        })
+        const currentGameState = gameStates.PICKING_MODE;
         const _board = gameBoard2d(3,3);
         const _players = [/*player('John', 'X', true), player('Patricia', 'O', true)*/];
-        let currentPlayer = null;
+        let _currentPlayer = null;
         function setPlayers(players){
             players.forEach(p =>{
                 _players.push(player(p.name, p.team, p.isAI))
@@ -25,11 +26,11 @@ import SubscriberPublisherController from './utilities/SubscriberPublisherContro
             _players.splice(0, _players.length);
         }
         function getCurrentPlayer(){
-            return _players[currentPlayer];
+            return _players[_currentPlayer];
         }
         function toggleCurrentPlayer(){
-            currentPlayer++;
-            currentPlayer %= 2;
+            _currentPlayer++;
+            _currentPlayer %= 2;
         }
         function checkForWinner(x,y,board){
             //Returns 'X', 'O', null
@@ -59,20 +60,29 @@ import SubscriberPublisherController from './utilities/SubscriberPublisherContro
                 return args[0];
             }
         }
-        //WIRE SUB/PUB
-        Subscriber.subscribe(new Subscription('playersAdded', setPlayers));
-
-    })(Controller);
+        return {
+            checkForWinner,
+            currentGameState,
+            gameStates,
+            getCurrentPlayer,
+            getTile: _board.getTile,
+            removeAllPlayers,
+            resetBoard: _board.resetBoard,
+            setPlayers: setPlayers,
+            setTile: _board.setTile,
+            toggleCurrentPlayer,
+        }
+    })();
     //VIEW
-    const View = ((Controller) => {
+    const View = ((Model, Controller) => {
         //VIEW DECLARATIONS
         const _root = document.querySelector('#ticTacToe');
         const _title = document.createElement('h1');
             _title.classList.add('title');
             _title.innerHTML = '#Tic-Tac-Toe';
-        const _gameContainer = gameContainer(_root, Controller);
+        const _gameContainer = gameContainer(_root, Model, Controller);
         //APPEND TO ROOT
         _root.appendChild(_title);
         _root.append(_gameContainer.create());
-    })(Controller);
+    })(Model, Controller);
 })()

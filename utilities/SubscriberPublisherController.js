@@ -1,6 +1,6 @@
 const SubscriberPublisherController = (()=>{
-  const logging = false;
-  function Subscription(eventName, func, {priority, excludesSelf} = {priority: 0, excludesSelf: true}){
+  const logging = true;
+  function Subscription(eventName, func, {priority, excludesSelf} = {priority: 0, excludesSelf: false}){
     this.eventName = eventName;
     this.func = func;
     this.priority = priority === undefined ? 0 : priority;
@@ -38,7 +38,10 @@ const SubscriberPublisherController = (()=>{
     }
   function publish(eventName, passedVal = {}){
     if(logging){
-      console.log(`%cPublish Event: ${eventName}`, "background: #213; font-size: large");
+      console.log(`%cPublish Event: ${eventName}`, "background: yellow; color: blue; font-size: large");
+      console.log('%cthis', "font-size: large")
+      console.log(this);
+      console.log('%c_subscriptions', "font-size: large")
       console.log(_subscriptions);
     }
     const eventsList = _subscriptions.getSubscriptions(eventName);
@@ -52,10 +55,13 @@ const SubscriberPublisherController = (()=>{
   function _subscribe(...subscriptions){
     subscriptions.forEach(subscription => {
       if(logging){
-        console.log(`%cSubscription Event: ${subscription.eventName}`, "background: #123; font-size: large");
-        console.log(new Date().toUTCString())
-        console.log(subscription);
+        console.log(`%cSubscription Event: ${subscription.eventName}`, "background: green; color: white; font-size: large");
+        console.log('%cthis', "font-size: large")
         console.log(this);
+        console.log('%csubscription', "font-size: large")
+        console.log(subscription);
+        console.log('%c_subscriptions', "font-size: large")
+        console.log(_subscriptions);
       }
       _subscriptions.addSubscription(subscription);
       this.subscriptions.addSubscription(subscription);
@@ -64,17 +70,31 @@ const SubscriberPublisherController = (()=>{
   function _unsubscribe(...subscriptions){
     subscriptions.forEach(subscription=>{
       if(logging){
-        console.log(`%cUnSub Event: ${subscription.eventName}`, "background: #321; font-size: large");
-        console.log(_subscriptions);
-        console.log(subscription);
+        console.log(`%cUnSub Event: ${subscription.eventName}`, "background: red; color: white; font-size: large");
+        console.log('%cthis', "font-size: large")
         console.log(this);
+        console.log('%csubscription', "font-size: large")
+        console.log(subscription);
+        console.log('%c_subscriptions', "font-size: large")
+        console.log(_subscriptions);
       }
       this.subscriptions.removeSubscription(subscription);
       _subscriptions.removeSubscription(subscription);
     })
   }
+  function _unsubscribeAll(){
+    const SubList = this.subscriptions.list;
+    const Subs = [];
+    Object.keys(SubList).forEach(key=>{
+      Subs.push(...SubList[key])
+    });
+    Subs.forEach(sub => {
+      this.unsubscribe(sub);
+    });
+  }
   function subscriberWrapper(object){ 
     object.unsubscribe = _unsubscribe;
+    object.unsubscribeAll = _unsubscribeAll;
     object.subscribe = _subscribe;
     object.subscriptions = new SubscriptionList();
     return object;

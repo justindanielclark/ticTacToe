@@ -1,20 +1,7 @@
-const computerOption = (root, Controller) => {
+const computerOption = (root, Model, Controller) => {
   //DECLARATIONS
   const _self = document.createElement('div');
-
-  function create(){
-    _self.classList.add('option', 'computerOption');
-    const _optionTitle = document.createElement('h3');
-      _optionTitle.classList.add('optionTitle');
-      _optionTitle.innerText = 'Player Vs. Computer';
-    const _SVG = _createComputerIconSVG();
-    const _rightPanel = document.createElement('div');
-      _rightPanel.classList.add('rightPanel');
-    const _optionsForm = document.createElement('div');
-      _optionsForm.classList.add('optionsForm');
-    const _difficultyLabel = document.createElement('label');
-      _difficultyLabel.innerText = 'Difficulty';
-    const _difficultyRange = document.createElement('input');
+  const _difficultyRange = document.createElement('input');
       Object.assign(_difficultyRange, {
         type: 'range',
         id: 'computerDifficulty',
@@ -23,17 +10,35 @@ const computerOption = (root, Controller) => {
         step: '1',
         value: '0',
       });
+  const _startGameButton = document.createElement('button');
+  const Subscriber = Controller.subscriberWrapper({self: _self});
+  const Subscription = Controller.Subscription;
+  const Publish = Controller.publish;
+  //WIRING
+  Subscriber.subscribe(new Subscription('slideLeft_end', _destroy, {priority: 0}));
+
+  //FUNCTIONS
+  function create(){
+    _self.classList.add('option', 'computerOption');
+    const _optionTitle = document.createElement('h3');
+    _optionTitle.classList.add('optionTitle');
+    _optionTitle.innerText = 'Player Vs. Computer';
+    const _SVG = _createComputerIconSVG();
+    const _rightPanel = document.createElement('div');
+    _rightPanel.classList.add('rightPanel');
+    const _optionsForm = document.createElement('div');
+    _optionsForm.classList.add('optionsForm');
+    const _difficultyLabel = document.createElement('label');
+    _difficultyLabel.innerText = 'Difficulty';
     const _rangeOptions = document.createElement('div');
-      _rangeOptions.classList.add('rangeOptions');
+    _rangeOptions.classList.add('rangeOptions');
     const _difficultyOptions = [
       _createRangeOption('Easy'),
       _createRangeOption('Hard'),
       _createRangeOption('Impossible'),
     ];
-    const _button = document.createElement('button');
-      _button.classList.add('optionsButton');
-      _button.innerText = 'Start';
-
+    _startGameButton.classList.add('optionsButton');
+    _startGameButton.innerText = 'Start';
     _self.appendChild(_optionTitle);
     _self.appendChild(_SVG);
     _self.appendChild(_rightPanel);
@@ -44,7 +49,7 @@ const computerOption = (root, Controller) => {
     _rangeOptions.appendChild(_difficultyOptions[0]);
     _rangeOptions.appendChild(_difficultyOptions[1]);
     _rangeOptions.appendChild(_difficultyOptions[2]);
-    _rightPanel.appendChild(_button);
+    _rightPanel.appendChild(_startGameButton);
     return _self;
     function _createComputerIconSVG(){
       const SVGComputer = document.createElementNS("http://www.w3.org/2000/svg", 'svg');
@@ -64,12 +69,12 @@ const computerOption = (root, Controller) => {
       return rangeOption;
     }
   }
-  function destroy(){
+  function _destroy(){
     root.removeChild(_self);
+    Subscriber.unsubscribeAll();
   }
   return {
-    create,
-    destroy
+    create
   }
 }
 

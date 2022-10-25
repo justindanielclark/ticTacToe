@@ -1,4 +1,4 @@
-const gameGrid = (root, Controller) => {
+const gameGrid = (root, Model, Controller) => {
   // DECLARATIONS
   const _self = document.createElement('div');
   const _id = 'gameGrid';
