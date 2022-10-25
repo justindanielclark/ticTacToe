@@ -23,8 +23,12 @@ const SubscriberPublisherController = (()=>{
       },
       removeSubscription: function(subscription){
         const {eventName} = subscription;
-        if(this.list[eventName] instanceof Array){
-          
+        const eventsArray = this.list[eventName];
+        if(eventsArray instanceof Array){
+          const eventIndex = eventsArray.indexOf(subscription);
+          if(eventIndex>=0){
+            eventsArray.splice(eventIndex, 1);
+          }
         }
       },
       getSubscriptions: function(eventName){
@@ -47,6 +51,10 @@ const SubscriberPublisherController = (()=>{
   }
   function unsubscribe(...subscriptions){
     //TODO
+    subscriptions.forEach(subscription=>{
+      this.subscriptions.removeSubscription(subscription);
+      _subscriptions.removeSubscription(subscription);
+    })
   }
   function subscriberWrapper(object){ 
     object.subscribe = _subscribe;
@@ -62,7 +70,14 @@ const SubscriberPublisherController = (()=>{
     publisherWrapper(object);
   }
   const _subscriptions = new SubscriptionList();
-  return {wrapper, Subscription, publish, subscriberWrapper, publisherWrapper} 
- })
+
+  return {
+    publish, 
+    publisherWrapper,
+    subscriberWrapper, 
+    Subscription, 
+    wrapper,
+  } 
+ });
 
  export default SubscriberPublisherController;

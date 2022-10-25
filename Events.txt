@@ -1,0 +1,11 @@
+playersAdded
+  [Triggers: startSlideButtons]
+slideTransitionStart
+  
+slideTransitionEnd
+gameStart
+  tileMarked
+  winnerChecked
+    winnerConfirmed
+    noWinner
+gameEnd

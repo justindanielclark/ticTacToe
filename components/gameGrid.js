@@ -1,4 +1,4 @@
-const gameGrid = (root, props) => {
+const gameGrid = (root, Controller) => {
   const _id = 'gameGrid';
   const _gridLines = [];
   const _tiles = [[],[],[]];

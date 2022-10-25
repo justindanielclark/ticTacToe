@@ -4,11 +4,29 @@ import player from './models/player.js';
 import SubscriberPublisherController from './utilities/SubscriberPublisherController.js';
 
 const App = (() => {
+    //CONTROLLER
+    const SubPub = SubscriberPublisherController();
+
     //MODEL
-    const model = (() => {
+    const Model = ((Controller) => {
+        //SETUP CONTROLLER
+        const Publish = Controller.publish;
+        const Subscriber = Controller.subscriberWrapper({});
+        const Subscription = Controller.Subscription;
+
+        //SETUP INTERNALS
         const _board = gameBoard2d(3,3);
-        const _players = [player('John', 'X', true), player('Patricia', 'O', true)];
-        let currentPlayer = 0;
+        const _players = [/*player('John', 'X', true), player('Patricia', 'O', true)*/];
+        let currentPlayer = null;
+        function setPlayers(players){
+            console.log(players);
+            players.forEach(p =>{
+                _players.push(player(p.name, p.team, p.isAI))
+            })
+        }
+        function removeAllPlayers(){
+            _players.splice(0, _players.length);
+        }
         function getCurrentPlayer(){
             return _players[currentPlayer];
         }
@@ -44,38 +62,24 @@ const App = (() => {
                 return args[0];
             }
         }
-        return {
-            checkForWinner,
-            getCurrentPlayer,
-            getTile: _board.getTile,
-            printBoard: _board.printBoard,
-            resetBoard: _board.resetBoard,
-            setTile: _board.setTile,
-            toggleCurrentPlayer,
-        }
-    })();
+        //WIRE SUB/PUB
+        Subscriber.subscribe(new Subscription('playersAdded', setPlayers))
+
+    })(SubPub);
     //VIEW
-    const view = (() => {
+    const View = ((Controller) => {
         //VIEW DECLARATIONS
         const _root = document.querySelector('#ticTacToe');
         const _title = document.createElement('h1')
             _title.classList.add('title');
             _title.innerHTML = '#Tic-Tac-Toe';
-        const _gameContainer = gameContainer(_root);
+        const _gameContainer = gameContainer(_root, Controller);
 
         //APPEND TO ROOT
         _root.appendChild(_title);
         _root.append(_gameContainer.create());
 
-        return {
-            
-        }
-    })();
-    
-    
-    return {
-        
-    }
+    })(SubPub);
 })()
 
 window.App = App;
