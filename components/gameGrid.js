@@ -1,4 +1,6 @@
 const gameGrid = (root, Controller) => {
+  // DECLARATIONS
+  const _self = document.createElement('div');
   const _id = 'gameGrid';
   const _gridLines = [];
   const _tiles = [[],[],[]];
@@ -11,7 +13,6 @@ const gameGrid = (root, Controller) => {
       gridLine.classList.add('gridLine', orientation, placement, direction);
       return gridLine;
     }
-    const _self = document.createElement('div');
     _self.id = _id;
     const _mask = document.createElement('div');
       _mask.id = 'gameGridMask'
@@ -38,7 +39,7 @@ const gameGrid = (root, Controller) => {
     return _self;
   }
   function destroy(){
-    root.removeChild(root.querySelector(`#${_id}`))
+    root.removeChild(_self)
   }
   function toggleGridLines(){
     _gridExpanded = !_gridExpanded;
@@ -88,12 +89,7 @@ const gameGrid = (root, Controller) => {
     return svg;
   }
   return {
-    create,
-    destroy,
-    toggleGridLines, 
-    getTiles,
-    markTile,
-    removeMark
+    create
   }
 }
 

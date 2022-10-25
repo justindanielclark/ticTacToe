@@ -1,25 +1,35 @@
-import gameGrid from './gameGrid.js';
+import gameSlide from './gameSlide.js';
 import startSlide from './startSlide.js';
 
 const gameContainer = (root, Controller) => {
   //DECLARATIONS
   const _self = document.createElement('div');
-  const Subscriber = Controller.subscriberWrapper({});
-  const Publish = Controller.Publish;
+  const Subscriber = Controller.subscriberWrapper({self: _self});
+  const Publish = Controller.publish;
   const Subscription = Controller.Subscription;
-  //SUBSCRIPTIONS
-  Subscriber.subscribe(new Subscription('playersAdded', _slideLeft, {priority: 1}));
+  //SUBSCRIPTIONS / WIRING
+  Subscriber.subscribe(
+    new Subscription('playersAdded', _slideLeft),
+    new Subscription('playersAdded', _createGameSlide)
+  );
+  _self.addEventListener('animationend', (event)=>{
+    if(event.animationName === 'slidingLeft'){
+      _self.classList.remove('slidingLeft');
+      Publish('slidingLeftAnimationEnded');
+    }
+  })
+
   //FUNCTIONS
   function create(){
     _self.classList.add('slideContainer');
-    const _startSlide = startSlide(_self, Controller);
-    _self.appendChild(_startSlide.create());
+    _createStartSlide();
     return _self;
   }
-  function _readyGameGrid(){
-    const _gameGrid = gameGrid(_self, Controller);
-    _self.appendChild()
-
+  function _createStartSlide(){
+    _self.appendChild(startSlide(_self, Controller).create());
+  }
+  function _createGameSlide(){
+    _self.appendChild(gameSlide(_self, Controller).create())
   }
   function _slideLeft(){
     if(!_self.classList.contains('slidingLeft')){

@@ -3,15 +3,13 @@ import gameBoard2d from './models/gameBoard2d.js';
 import player from './models/player.js';
 import SubscriberPublisherController from './utilities/SubscriberPublisherController.js';
 
-const App = (() => {
+(() => {
     //CONTROLLER
-    const SubPub = SubscriberPublisherController();
-
+    const Controller = SubscriberPublisherController();
     //MODEL
     const Model = ((Controller) => {
         //SETUP CONTROLLER
-        const Publish = Controller.publish;
-        const Subscriber = Controller.subscriberWrapper({});
+        const Subscriber = Controller.subscriberWrapper({self: 'Model'});
         const Subscription = Controller.Subscription;
 
         //SETUP INTERNALS
@@ -19,7 +17,6 @@ const App = (() => {
         const _players = [/*player('John', 'X', true), player('Patricia', 'O', true)*/];
         let currentPlayer = null;
         function setPlayers(players){
-            console.log(players);
             players.forEach(p =>{
                 _players.push(player(p.name, p.team, p.isAI))
             })
@@ -63,23 +60,19 @@ const App = (() => {
             }
         }
         //WIRE SUB/PUB
-        Subscriber.subscribe(new Subscription('playersAdded', setPlayers))
+        Subscriber.subscribe(new Subscription('playersAdded', setPlayers));
 
-    })(SubPub);
+    })(Controller);
     //VIEW
     const View = ((Controller) => {
         //VIEW DECLARATIONS
         const _root = document.querySelector('#ticTacToe');
-        const _title = document.createElement('h1')
+        const _title = document.createElement('h1');
             _title.classList.add('title');
             _title.innerHTML = '#Tic-Tac-Toe';
         const _gameContainer = gameContainer(_root, Controller);
-
         //APPEND TO ROOT
         _root.appendChild(_title);
         _root.append(_gameContainer.create());
-
-    })(SubPub);
+    })(Controller);
 })()
-
-window.App = App;

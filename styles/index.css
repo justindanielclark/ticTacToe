@@ -44,7 +44,6 @@ body {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  overflow: hidden;
 }
 #ticTacToe .slideContainer.slidingLeft {
   transform: translateX(-100%);
@@ -89,8 +88,15 @@ body {
   }
 }
 #ticTacToe .slideContainer .slide {
+  flex: 1 0 auto;
   width: 100%;
   height: 100%;
+}
+#ticTacToe .slideContainer .slide#gameSlide {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 #ticTacToe .slideContainer .slide#startSlide {
   display: grid;
@@ -181,11 +187,14 @@ body {
   width: 90%;
 }
 #ticTacToe .slideContainer .slide#startSlide .option .rightPanel .optionsForm input[type=range] {
+  -moz-appearance: none;
+       appearance: none;
   -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
   width: 100%; /* Specific width is required for Firefox. */
   background: transparent; /* Otherwise white in Chrome */
 }
 #ticTacToe .slideContainer .slide#startSlide .option .rightPanel .optionsForm input[type=range]::-webkit-slider-thumb {
+  appearance: none;
   -webkit-appearance: none;
   height: 1.5rem;
   width: 1.5rem;
