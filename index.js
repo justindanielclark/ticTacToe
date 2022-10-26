@@ -8,15 +8,9 @@ import SubPub from './utilities/SubscriberPublisherController.js';
 
     //MODEL
     const Model = (() => {
-        const gameStates = Object.freeze({
-            PICKING_MODE: 'PICKING_MODE',
-            SLIDE_TRANSITION_GAME_START: 'SLIDE_TRANSITION_GAME_START',
-            GAME_ACTIVE: 'GAME_ACTIVE',
-        })
-        const currentGameState = gameStates.PICKING_MODE;
         const _board = gameBoard2d(3,3);
         const _players = [/*player('John', 'X', true), player('Patricia', 'O', true)*/];
-        let _currentPlayer = null;
+        let _currentPlayer = 0;
         function setPlayers(players){
             players.forEach(p =>{
                 _players.push(player(p.name, p.team, p.isAI))
@@ -27,6 +21,14 @@ import SubPub from './utilities/SubscriberPublisherController.js';
         }
         function getCurrentPlayer(){
             return _players[_currentPlayer];
+        }
+        function setCurrentPlayer(val){
+            if(val > 1){
+                val = 1;
+            } else if(val < 0){
+                val = 0
+            }
+            _currentPlayer = val;
         }
         function toggleCurrentPlayer(){
             _currentPlayer++;
@@ -62,8 +64,6 @@ import SubPub from './utilities/SubscriberPublisherController.js';
         }
         return {
             checkForWinner,
-            currentGameState,
-            gameStates,
             getCurrentPlayer,
             getTile: _board.getTile,
             removeAllPlayers,

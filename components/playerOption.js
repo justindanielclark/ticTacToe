@@ -73,10 +73,9 @@ const playerOption = (root, Model, Controller) => {
     }
   }
   function _handle_startGameButton_Click(event){
-    Model.setPlayers([
-      player(player1Input.value, 'X', false),
-      player(player2Input.value, 'O', false)
-    ]);
+    const Player1 = player(player1Input.value, 'X', false);
+    const Player2 = player(player2Input.value, 'O', false);
+    Model.setPlayers([Player1, Player2]);
     Publish('slideLeft_start', null);
   }
   function _destroy(){

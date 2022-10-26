@@ -10,8 +10,8 @@ const gameBoard2d = (sizeX, sizeY) => {
             }
         }
     }
-    const getTile = ({location}) => {
-        const [x,y] = location;
+    const getTile = (location2D) => {
+        const [x,y] = location2D;
         return _board[x][y];
     }
     const printBoard = () => {
@@ -30,8 +30,8 @@ const gameBoard2d = (sizeX, sizeY) => {
         _sizeY = newSizeY;
         _resetBoard(_sizeX, _sizeY);
     }
-    const setTile = ({location, val}) => {
-        const [x,y] = location;
+    const setTile = (location2D, val) => {
+        const [x,y] = location2D;
         _board[x][y] = val
         return val;
     }

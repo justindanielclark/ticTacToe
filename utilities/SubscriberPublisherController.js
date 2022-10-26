@@ -1,5 +1,5 @@
 const SubscriberPublisherController = (()=>{
-  const logging = true;
+  const logging = false;
   function Subscription(eventName, func, {priority, excludesSelf} = {priority: 0, excludesSelf: false}){
     this.eventName = eventName;
     this.func = func;
@@ -46,7 +46,7 @@ const SubscriberPublisherController = (()=>{
     }
     const eventsList = _subscriptions.getSubscriptions(eventName);
     if(eventsList instanceof Array){
-      eventsList.forEach(subscription => {
+      [...eventsList].forEach(subscription => {
         if(logging){
           console.log(`%cFunc Ran: ${eventName}`, "background: orange; color: blue;");
           console.log(subscription.func);

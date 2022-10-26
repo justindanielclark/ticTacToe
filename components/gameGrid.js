@@ -1,11 +1,37 @@
+//NOTES: _resetBoard needs to be reimplemented to not be retarded.
+
 const gameGrid = (root, Model, Controller) => {
   // DECLARATIONS
   const _self = document.createElement('div');
-  const _id = 'gameGrid';
+  _self.id = 'gameGrid';
+  const _mask = document.createElement('div');
+  _mask.id = 'gameGridMask';
+  const _gameField = document.createElement('div');
+  _gameField.id = 'gameGridField'
+  _gameField.appendChild(_mask);
+  _self.appendChild(_gameField);
+  const _createGridLine = (orientation, placement, direction) => {
+    const gridLine = document.createElement('div');
+    gridLine.classList.add('gridLine', orientation, placement, direction);
+    return gridLine;
+  }
   const _gridLines = [];
+  _gridLines.push(_createGridLine('vertical', 'first', 'topToBottom'))
+  _gridLines.push(_createGridLine('vertical', 'second', 'bottomToTop'))
+  _gridLines.push(_createGridLine('horizontal', 'first', 'leftToRight'))
+  _gridLines.push(_createGridLine('horizontal', 'second', 'rightToLeft'))
+  _gridLines.forEach(gridLine => {_mask.appendChild(gridLine)})
   const _tiles = [[],[],[]];
-  let _activeTiles = 0;
-  let _gridExpanded = false;
+  for(let y = 0; y < 3; y++){
+    for(let x = 0; x < 3; x++){
+        const tile = document.createElement('div');
+        tile.classList.add('tile', 'inactive');
+        tile.dataset.x = x;
+        tile.dataset.y = y;
+        _tiles[x][y] = tile;
+        _gameField.append(tile);
+    }
+  }
 
   const Subscriber = Controller.subscriberWrapper({self: _self});
   const Subscription = Controller.Subscription;
@@ -15,48 +41,18 @@ const gameGrid = (root, Model, Controller) => {
   Subscriber.subscribe(
     new Subscription('slideLeft_end', _toggleGridLines),
     new Subscription('slideRight_end', _destroy),
+    new Subscription('gameBoardReset', _resetBoard),
   )
+  for(let y = 0; y < 3; y++){
+    for(let x = 0; x < 3; x++){
+        const tile = _tiles[x][y];
+        tile.addEventListener('click', _handle_tileClicked);
+    }
+  }
 
   //FUNCTIONS
   function create(){
-    const _createGridLine = (orientation, placement, direction) => {
-      const gridLine = document.createElement('div');
-      gridLine.classList.add('gridLine', orientation, placement, direction);
-      return gridLine;
-    }
-    _self.id = _id;
-    const _mask = document.createElement('div');
-      _mask.id = 'gameGridMask'
-    const _gameField = document.createElement('div');
-      _gameField.id = 'gameGridField'
-    _gameField.appendChild(_mask);
-    _self.appendChild(_gameField);
-    _gridLines.push(_createGridLine('vertical', 'first', 'topToBottom'))
-    _gridLines.push(_createGridLine('vertical', 'second', 'bottomToTop'))
-    _gridLines.push(_createGridLine('horizontal', 'first', 'leftToRight'))
-    _gridLines.push(_createGridLine('horizontal', 'second', 'rightToLeft'))
-    _gridLines.forEach(gridLine => {_mask.appendChild(gridLine)})
-
-    for(let y = 0; y < 3; y++){
-      for(let x = 0; x < 3; x++){
-          const tile = document.createElement('div');
-          tile.classList.add('tile', 'inactive');
-          tile.dataset.x = x;
-          tile.dataset.y = y;
-          _tiles[x][y] = tile;
-          _gameField.appendChild(tile); 
-      }
-    }
     return _self;
-  }
-  function _destroy(){
-    console.log('GAME GRID HIT');
-    root.removeChild(_self)
-    Subscriber.unsubscribeAll();
-  }
-  function _toggleGridLines(){
-    _gridExpanded = !_gridExpanded;
-    _gridLines.forEach(gridline => gridline.classList.toggle('expanded'))
   }
   function _createCircle(){
     const svgCircle = document.createElementNS("http://www.w3.org/2000/svg", 'svg');
@@ -78,33 +74,57 @@ const gameGrid = (root, Model, Controller) => {
     svgCross.appendChild(svgCrossPath);
     return svgCross;
   }
-  function getTiles(){
+  function _destroy(){
+    console.log('GAME GRID HIT');
+    root.removeChild(_self)
+    Subscriber.unsubscribeAll();
+  }
+  function _getTiles(){
     return [..._tiles[0], ..._tiles[1], ..._tiles[2]];
   }
-  function markTile(location, val){
+  function _handle_tileClicked(event){
+    const {x,y} = event.target.dataset;
+    if(Model.getTile([x,y]) === null){
+      const currentTeam = Model.getCurrentPlayer().team;
+      _markTile([x,y], currentTeam);
+      Model.setTile([x,y], currentTeam);
+      Model.toggleCurrentPlayer();
+    }
+    console.log(Model);
+  }
+  function _markTile(location, val){
     const [x,y] = location;
     const tile = _tiles[x][y];
     const mark = (val === 'X' ? _createCross() : _createCircle())
     tile.appendChild(mark);
     tile.classList.toggle('inactive');
-    _activeTiles++;
   }
-  function removeMark(location){
+  function _removeMark(location){
     const [x,y] = location;
-    const tile = _tiles[x][y]
+    const tile = _tiles[x][y];
     const svg = tile.querySelector('.mark');
-    svg.classList.toggle('active');
-    svg.classList.toggle('inactive');
-    _activeTiles--;
-    svg.addEventListener('animationend', ()=>{
-      tile.removeChild(svg);
-    })
-    return svg;
+    if(svg){
+      svg.classList.toggle('active');
+      svg.classList.toggle('inactive');
+      svg.addEventListener('animationend', ()=>{
+        tile.removeChild(svg);
+      })
+    }
+  }
+  function _resetBoard(){
+    Model.resetBoard();
+    for(let y = 0; y < 3; y++){
+      for(let x = 0; x < 3; x++){
+          _removeMark([x,y]);
+      }
+    }
+  }
+  function _toggleGridLines(){
+    _gridLines.forEach(gridline => gridline.classList.toggle('expanded'))
   }
   return {
     create
   }
 }
-
 
 export default gameGrid;
