@@ -75,7 +75,7 @@ body, html {
 body {
     min-height: 100vh;
     width: 100vw;
-    background-color: $color-0;
+    background-color: $color-1;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -95,7 +95,7 @@ body {
         font-size: 2rem;
         font-weight: bolder;
         border-bottom: .15rem solid $color-5;
-        margin-bottom: 1.5rem;
+        margin-bottom: .25rem;
         padding: .5rem;
     }
     .slideContainer {
@@ -141,56 +141,36 @@ body {
                     flex-direction: column;
                     justify-content: start;
                     align-items: stretch;
-                    background-color: #15803d;
                     .scoreBoard {
-                        flex: 0 0 50%;
-                        background-color: red;
-                    }
-                    .controls {
-                        flex: 0 0 50%;
-                        background-color: orange;
-                    }
-                }
-                #gameGrid {
-                    position: relative;
-                    box-shadow: .25rem .25rem rgba(0,0,0,.35);
-                    background-color: rgba(255,255,255,.1);
-                    border-top: .2rem solid rgba(255,255,255,.2);
-                    border-left: .2rem solid rgba(255,255,255,.2);
-                    #gameGridMask {
-                        pointer-events: none;
-                        position: absolute;
-                        width: 100%;
-                        height: 100%;
-                        top: 0;
-                        left: 0;
-                        z-index: 100;
-                        .gridLine {
-                            position: absolute;
-                            background-color: white;
-                            box-shadow: .25rem .25rem rgba(0,0,0,.35);
-                            &.horizontal {
-                                width: 0;
-                                height: .5rem;
-                                transform: translateY(-50%);
-                                transition: width .5s;
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: space-between;
+                        align-items: center;
+                        padding: .25rem .5rem;
+                        height: 2rem;
+                        .score {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: stretch;
+                            color: $color-9;
+                            font-size: 1.2rem;
+                            height: 100%;
+                            .playerInfo {
+                                padding: 0 .25rem .15rem .25rem;
+                                flex: 0 0 auto;
+                            }
+                            .indicator {
+                                flex: 1 0 auto;
+                                background-color: $color-8;
                                 &.expanded {
                                     width: 100%;
-                                    animation: expandedHorizontal $gridLine-animation-speed $gridLine-animation-timing $gridLine-animation-delay;
+                                    animation: indicatorExpanded .35s ease-in-out 0s;
                                 }
-                                &.leftToRight {
-                                    left: 0;
+                                &.retracted {
+                                    width: 0%;
+                                    animation: indicatorRetracted .35s ease-in-out 0s;
                                 }
-                                &.rightToLeft {
-                                    right: 0;
-                                }
-                                &.first {
-                                    top: 33.3%;
-                                }
-                                &.second {
-                                    top: 66.6%;
-                                }
-                                @keyframes expandedHorizontal {
+                                @keyframes indicatorExpanded {
                                     0% {
                                         width: 0%;
                                     }
@@ -198,39 +178,47 @@ body {
                                         width: 100%;
                                     }
                                 }
-                            }
-                            &.vertical {
-                                height: 0%;
-                                width: .5rem;
-                                transform: translateX(-50%);
-                                transition: height .5s;
-                                &.expanded {
-                                    height: 100%;
-                                    animation: expandedVertical $gridLine-animation-speed $gridLine-animation-timing $gridLine-animation-delay;
-                                }
-                                &.topToBottom{
-                                    top: 0;
-                                }
-                                &.bottomToTop{
-                                    bottom: 0;
-                                }
-                                &.first {
-                                    left: 33.3%;
-                                }
-                                &.second {
-                                    left: 66.6%;
-                                }
-                                @keyframes expandedVertical {
+                                @keyframes indicatorRetracted {
                                     0% {
-                                        height: 0%;
+                                        width: 100%;
                                     }
                                     100% {
-                                        height: 100%;
+                                        width: 0%;
                                     }
                                 }
                             }
                         }
                     }
+                    .controls {
+                        display: flex;
+                        flex-direction: row;
+                        gap: .5rem;
+                        justify-content: center;
+                        button {
+                            cursor: pointer;
+                            height: 2.5rem;
+                            padding: .25rem .5rem;
+                            font-weight: bold;
+                            border-radius: 5px;
+                            outline: none;
+                            border: 1px solid darken($color-2, 25%);
+                            box-shadow: .15rem .15rem darken($color-2, 15%);
+                            background-color: $color-2;
+                            color: $color-9;
+                            transition: box-shadow .35s ease-in-out;
+                            &:focus, &:hover {
+                                box-shadow: .25rem .25rem darken($color-2, 25%);
+                            }
+                        }
+                    }
+                }
+                #gameGrid {
+                    position: relative;
+                    margin: 1rem;
+                    box-shadow: .25rem .25rem rgba(0,0,0,.35);
+                    background-color: rgba(255,255,255,.1);
+                    border-top: .2rem solid rgba(255,255,255,.2);
+                    border-left: .2rem solid rgba(255,255,255,.2);
                     #gameGridField {
                         position: relative;
                         width: 100%;
@@ -239,30 +227,105 @@ body {
                         grid-template-columns: repeat(3, 1fr);
                         grid-template-rows: repeat(3, 1fr);
                         gap: .5rem;
+                        #gameGridMask {
+                            pointer-events: none;
+                            position: absolute;
+                            width: 100%;
+                            height: 100%;
+                            top: 0;
+                            left: 0;
+                            z-index: 100;
+                            .gridLine {
+                                position: absolute;
+                                background-color: $color-7;
+                                box-shadow: .25rem .25rem rgba(0,0,0,.35);
+                                &.horizontal {
+                                    width: 0;
+                                    height: .5rem;
+                                    transform: translateY(-50%);
+                                    transition: width .5s;
+                                    &.expanded {
+                                        width: 100%;
+                                        animation: expandedHorizontal $gridLine-animation-speed $gridLine-animation-timing $gridLine-animation-delay;
+                                    }
+                                    &.leftToRight {
+                                        left: 0;
+                                    }
+                                    &.rightToLeft {
+                                        right: 0;
+                                    }
+                                    &.first {
+                                        top: 33.3%;
+                                    }
+                                    &.second {
+                                        top: 66.6%;
+                                    }
+                                    @keyframes expandedHorizontal {
+                                        0% {
+                                            width: 0%;
+                                        }
+                                        100% {
+                                            width: 100%;
+                                        }
+                                    }
+                                }
+                                &.vertical {
+                                    height: 0%;
+                                    width: .5rem;
+                                    transform: translateX(-50%);
+                                    transition: height .5s;
+                                    &.expanded {
+                                        height: 100%;
+                                        animation: expandedVertical $gridLine-animation-speed $gridLine-animation-timing $gridLine-animation-delay;
+                                    }
+                                    &.topToBottom{
+                                        top: 0;
+                                    }
+                                    &.bottomToTop{
+                                        bottom: 0;
+                                    }
+                                    &.first {
+                                        left: 33.3%;
+                                    }
+                                    &.second {
+                                        left: 66.6%;
+                                    }
+                                    @keyframes expandedVertical {
+                                        0% {
+                                            height: 0%;
+                                        }
+                                        100% {
+                                            height: 100%;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         .tile {
+                            cursor: pointer;
                             display: flex;
                             justify-content: center;
                             align-items: center;
                             svg {
-                                fill: white;
+                                fill: $color-8;
                                 width: 0%;
                                 height: 0%;
                                 &.active {
-                                    width: 70%;
-                                    height: 70%;
-                                    animation: activeAnimation .35s ease-in 0s;
+                                    width: 60%;
+                                    height: 60%;
+                                    animation: activeAnimation .20s ease-in 0s;
                                 }
                                 &.inactive {
-                                    animation: inactiveAnimation .35s ease-in 0s;
+                                    animation: inactiveAnimation 0.35s ease-out 0s;
                                 }
                                 @keyframes activeAnimation {
                                     0% {width: 0%; height:0%;}
-                                    80% {width: 80%; height: 80%;}
-                                    100% {width: 70%; height: 70%;}
+                                    80% {width: 65%; height: 65%;}
+                                    100% {width: 60%; height: 60%;}
                                 }
                                 @keyframes inactiveAnimation {
-                                    0% {width: 70%; height:70%;}
-                                    80% {width: 80%; height: 80%;}
+                                    0% {width: 60%; height: 60%;}
+                                    80% {width: 65%; height: 65%;}
                                     100% {width: 0%; height: 0%;}
                                 }
                 
@@ -335,17 +398,22 @@ body {
                         button {
                             color: $color-9;
                             font-weight: bold;
-                            background-color: $color-success;
+                            background-color: $color-2;
                             padding: .5rem 1rem;
                             font-size: 1.1rem;
                             width: 60%;
                             border-radius: 1rem;
                             outline: none;
                             border-top: none;
-                            border-right: 2px solid $color-success-alt;
-                            border-bottom: 2px solid $color-success-alt;
+                            border-right: 2px solid darken($color-4, 40%);
+                            border-bottom: 2px solid darken($color-4, 40%);
+                            box-shadow: .15rem .15rem darken($color-4, 15%);
                             border-left: none;
                             align-self: flex-end;
+                            transition: box-shadow .35s ease-in-out;
+                            &:focus, &:hover {
+                                box-shadow: .25rem .25rem darken($color-4, 25%);
+                            }
                         }
                         .optionsForm {
                             flex: 1 0 auto;

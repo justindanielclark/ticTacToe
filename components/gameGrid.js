@@ -16,10 +16,10 @@ const gameGrid = (root, Model, Controller) => {
     return gridLine;
   }
   const _gridLines = [];
-  _gridLines.push(_createGridLine('vertical', 'first', 'topToBottom'))
-  _gridLines.push(_createGridLine('vertical', 'second', 'bottomToTop'))
-  _gridLines.push(_createGridLine('horizontal', 'first', 'leftToRight'))
-  _gridLines.push(_createGridLine('horizontal', 'second', 'rightToLeft'))
+  _gridLines.push(_createGridLine('vertical', 'first', Math.random() > .5 ? 'topToBottom' : 'bottomToTop'))
+  _gridLines.push(_createGridLine('vertical', 'second', Math.random() > .5 ? 'topToBottom' : 'bottomToTop'))
+  _gridLines.push(_createGridLine('horizontal', 'first', Math.random() > .5 ? 'leftToRight' : 'rightToLeft'))
+  _gridLines.push(_createGridLine('horizontal', 'second', Math.random() > .5 ? 'leftToRight' : 'rightToLeft'))
   _gridLines.forEach(gridLine => {_mask.appendChild(gridLine)})
   const _tiles = [[],[],[]];
   for(let y = 0; y < 3; y++){
@@ -75,7 +75,6 @@ const gameGrid = (root, Model, Controller) => {
     return svgCross;
   }
   function _destroy(){
-    console.log('GAME GRID HIT');
     root.removeChild(_self)
     Subscriber.unsubscribeAll();
   }
@@ -90,7 +89,7 @@ const gameGrid = (root, Model, Controller) => {
       Model.setTile([x,y], currentTeam);
       Model.toggleCurrentPlayer();
     }
-    console.log(Model);
+    Publish('tileClicked', null)
   }
   function _markTile(location, val){
     const [x,y] = location;
@@ -106,8 +105,10 @@ const gameGrid = (root, Model, Controller) => {
     if(svg){
       svg.classList.toggle('active');
       svg.classList.toggle('inactive');
-      svg.addEventListener('animationend', ()=>{
-        tile.removeChild(svg);
+      svg.addEventListener('animationend', (event)=>{
+        if(event.target === svg){
+          tile.removeChild(svg);
+        }
       })
     }
   }
@@ -115,6 +116,9 @@ const gameGrid = (root, Model, Controller) => {
     Model.resetBoard();
     for(let y = 0; y < 3; y++){
       for(let x = 0; x < 3; x++){
+          if(!_tiles[x][y].classList.contains('inactive')){
+            _tiles[x][y].classList.add('inactive');
+          }
           _removeMark([x,y]);
       }
     }

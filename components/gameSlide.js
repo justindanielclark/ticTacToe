@@ -21,7 +21,6 @@ const gameSlide = (root, Model, Controller) => {
     return _self;
   }
   function _destroy(){
-    console.log('GAME SLIDE HIT');
     root.removeChild(_self);
     Subscriber.unsubscribeAll();
   }

@@ -12,6 +12,7 @@ import SubPub from './utilities/SubscriberPublisherController.js';
         const _players = [/*player('John', 'X', true), player('Patricia', 'O', true)*/];
         let _currentPlayer = 0;
         function setPlayers(players){
+            removeAllPlayers();
             players.forEach(p =>{
                 _players.push(player(p.name, p.team, p.isAI))
             })
@@ -22,10 +23,13 @@ import SubPub from './utilities/SubscriberPublisherController.js';
         function getCurrentPlayer(){
             return _players[_currentPlayer];
         }
+        function getPlayers(){
+            return _players;
+        }
         function setCurrentPlayer(val){
             if(val > 1){
                 val = 1;
-            } else if(val < 0){
+            } else if(val <= 0){
                 val = 0
             }
             _currentPlayer = val;
@@ -65,9 +69,11 @@ import SubPub from './utilities/SubscriberPublisherController.js';
         return {
             checkForWinner,
             getCurrentPlayer,
+            getPlayers,
             getTile: _board.getTile,
             removeAllPlayers,
             resetBoard: _board.resetBoard,
+            setCurrentPlayer,
             setPlayers: setPlayers,
             setTile: _board.setTile,
             toggleCurrentPlayer,
