@@ -1,15 +1,9 @@
-//NOTES: _resetBoard needs to be reimplemented to not be retarded.
-
 const gameGrid = (root, Model, Controller) => {
   // DECLARATIONS
   const _self = document.createElement('div');
   _self.id = 'gameGrid';
   const _mask = document.createElement('div');
   _mask.id = 'gameGridMask';
-  const _gameField = document.createElement('div');
-  _gameField.id = 'gameGridField'
-  _gameField.appendChild(_mask);
-  _self.appendChild(_gameField);
   const _createGridLine = (orientation, placement, direction) => {
     const gridLine = document.createElement('div');
     gridLine.classList.add('gridLine', orientation, placement, direction);
@@ -20,7 +14,9 @@ const gameGrid = (root, Model, Controller) => {
   _gridLines.push(_createGridLine('vertical', 'second', Math.random() > .5 ? 'topToBottom' : 'bottomToTop'))
   _gridLines.push(_createGridLine('horizontal', 'first', Math.random() > .5 ? 'leftToRight' : 'rightToLeft'))
   _gridLines.push(_createGridLine('horizontal', 'second', Math.random() > .5 ? 'leftToRight' : 'rightToLeft'))
-  _gridLines.forEach(gridLine => {_mask.appendChild(gridLine)})
+  _mask.append(..._gridLines)
+  _self.append(_mask);
+  
   const _tiles = [[],[],[]];
   for(let y = 0; y < 3; y++){
     for(let x = 0; x < 3; x++){
@@ -29,7 +25,7 @@ const gameGrid = (root, Model, Controller) => {
         tile.dataset.x = x;
         tile.dataset.y = y;
         _tiles[x][y] = tile;
-        _gameField.append(tile);
+        _self.append(tile);
     }
   }
 
@@ -45,8 +41,7 @@ const gameGrid = (root, Model, Controller) => {
   )
   for(let y = 0; y < 3; y++){
     for(let x = 0; x < 3; x++){
-        const tile = _tiles[x][y];
-        tile.addEventListener('click', _handle_tileClicked);
+        _tiles[x][y].addEventListener('click', _handle_tileClicked);
     }
   }
 
@@ -75,31 +70,53 @@ const gameGrid = (root, Model, Controller) => {
     return svgCross;
   }
   function _destroy(){
-    root.removeChild(_self)
+    root.removeChild(_self);
     Subscriber.unsubscribeAll();
+    for(let y = 0; y < 3; y++){
+      for(let x = 0; x < 3; x++){
+          _tiles[x][y].removeEventListener('click', _handle_tileClicked);
+      }
+    }
+  }
+  function _disableAllTiles(){
+    for(let y = 0; y < 3; y++){
+      for(let x = 0; x < 3; x++){
+          if(_tiles[x][y].classList.contains('inactive')){
+            _tiles[x][y].classList.remove('inactive');
+          }
+      }
+    }
   }
   function _getTiles(){
     return [..._tiles[0], ..._tiles[1], ..._tiles[2]];
   }
   function _handle_tileClicked(event){
     const {x,y} = event.target.dataset;
-    if(Model.getTile([x,y]) === null){
+    if(event.target.classList.contains('inactive')){
       const currentTeam = Model.getCurrentPlayer().team;
-      _markTile([x,y], currentTeam);
-      Model.setTile([x,y], currentTeam);
-      Model.toggleCurrentPlayer();
+      _markTile(x,y, currentTeam);
+      Model.setTile(x,y, currentTeam);
+      const winnerInfo = Model.checkForWinner(x,y);
+      if(winnerInfo.value){
+        _disableAllTiles();
+        winnerInfo.winningTiles.forEach(tile => {
+          const [x,y] = tile;
+          _tiles[x][y].classList.add('winning');
+        })
+      } else {
+        Model.toggleCurrentPlayer();
+        Publish('toggleIndicators', null);
+      }
     }
-    Publish('tileClicked', null)
+    Publish('easyAiToMove', null);
   }
-  function _markTile(location, val){
-    const [x,y] = location;
+  function _markTile(x,y,val){
     const tile = _tiles[x][y];
     const mark = (val === 'X' ? _createCross() : _createCircle())
     tile.appendChild(mark);
     tile.classList.toggle('inactive');
   }
-  function _removeMark(location){
-    const [x,y] = location;
+  function _removeMark(x,y){
     const tile = _tiles[x][y];
     const svg = tile.querySelector('.mark');
     if(svg){
@@ -116,10 +133,9 @@ const gameGrid = (root, Model, Controller) => {
     Model.resetBoard();
     for(let y = 0; y < 3; y++){
       for(let x = 0; x < 3; x++){
-          if(!_tiles[x][y].classList.contains('inactive')){
-            _tiles[x][y].classList.add('inactive');
-          }
-          _removeMark([x,y]);
+          _tiles[x][y].classList.add('inactive');
+          _tiles[x][y].classList.remove('winning');
+          _removeMark(x,y);
       }
     }
   }

@@ -1,0 +1,3 @@
+- Hover Takes Too Long to Fade on Buttons on GameGrid
+- Unwire all Event Handlers in Destroy For All Components
+- CheckWinner only returns the first found winning combination of tiles

@@ -9,7 +9,7 @@ const gameDisplay = (root, Model, Controller) => {
     _player1Score.classList.add('score');
   const _player1Info = document.createElement('div');
   _player1Info.classList.add('playerInfo');
-  _player1Info.innerText = `[Player X]: ${Model.getPlayers()[0].name}`
+  _player1Info.innerText = `[X]: ${Model.getPlayers()[0].name}`
   const _player1Indicator = document.createElement('div');
   _player1Indicator.classList.add('indicator', 'expanded');
   _player1Score.append(_player1Info, _player1Indicator);
@@ -18,7 +18,7 @@ const gameDisplay = (root, Model, Controller) => {
   _player2Score.classList.add('score');
   const _player2Info = document.createElement('div');
   _player2Info.classList.add('playerInfo');
-  _player2Info.innerText = `[Player O]: ${Model.getPlayers()[1].name}`
+  _player2Info.innerText = `[O]: ${Model.getPlayers()[1].name}`
   const _player2Indicator = document.createElement('div');
   _player2Indicator.classList.add('indicator', 'retracted');
   _player2Score.append(_player2Info, _player2Indicator);
@@ -34,13 +34,7 @@ const gameDisplay = (root, Model, Controller) => {
   const _pickGameModeButton = document.createElement('button');
   _pickGameModeButton.classList.add('displayButton');
   _pickGameModeButton.innerText = 'Pick Game Mode';
-  const _backButton = document.createElement('button');
-  _backButton.classList.add('displayButton');
-  _backButton.innerText = '<';
-  const _forwardButton = document.createElement('button');
-  _forwardButton.classList.add('displayButton');
-  _forwardButton.innerText = '>';
-  _controls.append(_backButton, _resetGameButton, _pickGameModeButton, _forwardButton);
+  _controls.append(_resetGameButton, _pickGameModeButton);
 
   _self.append(_scoreBoard, _controls);
 
@@ -53,7 +47,7 @@ const gameDisplay = (root, Model, Controller) => {
   _resetGameButton.addEventListener('click', _handle_resetGameButton_Click);
   Subscriber.subscribe(
     new Subscription('slideRight_end', _destroy),
-    new Subscription('tileClicked', _toggleIndicators)
+    new Subscription('toggleIndicators', _toggleIndicators)
   )
   //FUNCTIONS
   function create(){
@@ -62,6 +56,8 @@ const gameDisplay = (root, Model, Controller) => {
   function _destroy(){
     root.removeChild(_self);
     Subscriber.unsubscribeAll();
+    _pickGameModeButton.removeEventListener('click', _handle_pickGameModeButton_Click);
+    _resetGameButton.removeEventListener('click', _handle_resetGameButton_Click);
   }
   function _handle_resetGameButton_Click(event){
     Publish('gameBoardReset', null);

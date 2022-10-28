@@ -1,5 +1,5 @@
 const gameBoard2d = (sizeX, sizeY) => {
-    let _board = [];
+    const _board = [];
     let _sizeX = sizeX;
     let _sizeY = sizeY;
     const _createBoard = (sizeX, sizeY) => {
@@ -10,8 +10,7 @@ const gameBoard2d = (sizeX, sizeY) => {
             }
         }
     }
-    const getTile = (location2D) => {
-        const [x,y] = location2D;
+    const getTile = (x,y) => {
         return _board[x][y];
     }
     const printBoard = () => {
@@ -30,14 +29,16 @@ const gameBoard2d = (sizeX, sizeY) => {
         _sizeY = newSizeY;
         _resetBoard(_sizeX, _sizeY);
     }
-    const setTile = (location2D, val) => {
-        const [x,y] = location2D;
+    const setTile = (x,y,val) => {
         _board[x][y] = val
         return val;
     }
     const resetBoard = () => {
-        _board = [];
-        _createBoard(_sizeX, _sizeY);
+        for(let i = 0; i < sizeX; i++){
+            for(let j = 0; j < sizeY; j++){
+                _board[i][j] = null;
+            }
+        }
     }
     
     _createBoard(_sizeX, _sizeY);

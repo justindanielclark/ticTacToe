@@ -1,5 +1,3 @@
-import player from '../models/player.js';
-
 const playerOption = (root, Model, Controller) => {
   //DECLARATIONS
   const _textInputMaxLength = 15;
@@ -73,14 +71,23 @@ const playerOption = (root, Model, Controller) => {
     }
   }
   function _handle_startGameButton_Click(event){
-    const Player1 = player(player1Input.value, 'X', false);
-    const Player2 = player(player2Input.value, 'O', false);
+    const Player1 = {
+      name: player1Input.value, 
+      team: 'X', 
+      AiDifficulty: null
+    };
+    const Player2 = {
+      name: player2Input.value, 
+      team: 'O', 
+      AiDifficulty: null
+    };
     Model.setPlayers([Player1, Player2]);
     Publish('slideLeft_start', null);
   }
   function _destroy(){
     root.removeChild(_self);
     Subscriber.unsubscribeAll();
+    _startGameButton.removeEventListener('click', _handle_startGameButton_Click);
   }
   return {
     create,

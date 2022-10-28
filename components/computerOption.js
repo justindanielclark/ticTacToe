@@ -15,7 +15,10 @@ const computerOption = (root, Model, Controller) => {
   const Subscription = Controller.Subscription;
   const Publish = Controller.publish;
   //WIRING
-  Subscriber.subscribe(new Subscription('slideLeft_end', _destroy, {priority: 0}));
+  _startGameButton.addEventListener('click', _handle_startGameButton_Click);
+  Subscriber.subscribe(
+    new Subscription('slideLeft_end', _destroy, {priority: 0})
+  );
 
   //FUNCTIONS
   function create(){
@@ -69,9 +72,39 @@ const computerOption = (root, Model, Controller) => {
       return rangeOption;
     }
   }
+  function _handle_startGameButton_Click(event){
+    const Player1 = {
+      name: 'Human', 
+      team: 'X', 
+      AiDifficulty: null
+    };
+    let name;
+    switch(_difficultyRange.value){
+      case '0':{
+        name = "Easy AI";
+        break;
+      }
+      case '1':{
+        name = "Hard AI";
+        break;
+      } 
+      case '2':{
+        name = "Impossible AI";
+        break;
+      }
+    }
+    const Player2 = {
+      name: name,
+      team: 'O', 
+      AiDifficulty: _difficultyRange.value
+    };
+    Model.setPlayers([Player1, Player2]);
+    Publish('slideLeft_start', null);
+  }
   function _destroy(){
     root.removeChild(_self);
     Subscriber.unsubscribeAll();
+    _startGameButton.removeEventListener('click', _handle_startGameButton_Click);
   }
   return {
     create

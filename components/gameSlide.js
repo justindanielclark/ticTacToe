@@ -6,7 +6,6 @@ const gameSlide = (root, Model, Controller) => {
   const _self = document.createElement('div');
   const Subscriber = Controller.subscriberWrapper({self: _self});
   const Subscription = Controller.Subscription;
-  const Publish = Controller.publish;
   //WIRING
   Subscriber.subscribe(
     new Subscription('slideRight_end', _destroy, {priority: 1}),
@@ -15,8 +14,10 @@ const gameSlide = (root, Model, Controller) => {
   function create(){
     _self.id = _id;
     _self.classList.add('slide')
-    _self.appendChild(gameDisplay(_self, Model, Controller).create());
-    _self.appendChild(gameGrid(_self, Model, Controller).create());
+    _self.append(
+      gameDisplay(_self, Model, Controller).create(),
+      gameGrid(_self, Model, Controller).create()
+    );
     
     return _self;
   }
