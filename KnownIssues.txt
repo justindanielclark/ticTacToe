@@ -1,3 +1,1 @@
-- Hover Takes Too Long to Fade on Buttons on GameGrid
-- Unwire all Event Handlers in Destroy For All Components
-- CheckWinner only returns the first found winning combination of tiles
+Tie Game Needs Issue with Ownership being passed to AI to start next game, need to wire in on reset if 'O' is the current player, that 'O' will go first

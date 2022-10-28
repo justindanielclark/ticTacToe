@@ -1,5 +1,6 @@
 const gameGrid = (root, Model, Controller) => {
   // DECLARATIONS
+  const isAI = Model.getPlayers()[1].AiDifficulty;
   const _self = document.createElement('div');
   _self.id = 'gameGrid';
   const _mask = document.createElement('div');
@@ -38,6 +39,7 @@ const gameGrid = (root, Model, Controller) => {
     new Subscription('slideLeft_end', _toggleGridLines),
     new Subscription('slideRight_end', _destroy),
     new Subscription('gameBoardReset', _resetBoard),
+    new Subscription('AiMove', _handle_AIMove)
   )
   for(let y = 0; y < 3; y++){
     for(let x = 0; x < 3; x++){
@@ -87,8 +89,14 @@ const gameGrid = (root, Model, Controller) => {
       }
     }
   }
-  function _getTiles(){
-    return [..._tiles[0], ..._tiles[1], ..._tiles[2]];
+  function _enableUnchosenTiles(){
+    for(let y = 0; y < 3; y++){
+      for(let x = 0; x < 3; x++){
+          if(Model.getTile(x,y) === null){
+            _tiles[x][y].classList.add('inactive');
+          }
+      }
+    }
   }
   function _handle_tileClicked(event){
     const {x,y} = event.target.dataset;
@@ -106,9 +114,47 @@ const gameGrid = (root, Model, Controller) => {
       } else {
         Model.toggleCurrentPlayer();
         Publish('toggleIndicators', null);
+        if(isAI){
+          _disableAllTiles();
+          switch(isAI){
+            case '0':{
+              Publish('easyAiToMove', null);
+              break;
+            }
+            case '1':{
+              Publish('hardAiToMove', null);
+              break;
+            }
+            case '2':{
+              window.alert('Impossible AI not yet implemented');
+              break;
+            }
+            default: {
+              window.alert('Error in GameGrid.js -> See SubPub wiring for AI Choices')
+            }
+          }
+        }
       }
     }
-    Publish('easyAiToMove', null);
+  }
+  function _handle_AIMove(tile){
+    window.setTimeout(()=>{
+      const [x,y] = tile;
+      Model.setTile(x,y,'O');
+      _markTile(x,y,'O');
+      _enableUnchosenTiles();
+      const winnerInfo = Model.checkForWinner(x,y);
+      if(winnerInfo.value){
+        _disableAllTiles();
+        winnerInfo.winningTiles.forEach(tile => {
+          const [x,y] = tile;
+          _tiles[x][y].classList.add('winning');
+        })
+      } else {
+        Model.toggleCurrentPlayer();
+        Publish('toggleIndicators', null);
+      }
+    }, 500);
   }
   function _markTile(x,y,val){
     const tile = _tiles[x][y];

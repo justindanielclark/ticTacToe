@@ -140,10 +140,11 @@ import SubPub from './utilities/SubscriberPublisherController.js';
 
         Subscriber.subscribe(
             new Subscription('easyAiToMove', _makeEasyChoice),
+            new Subscription('hardAiToMove', _makeHardChoice),
         )
-
         function _makeEasyChoice(){
-            const remainingTiles = [];
+            //Always Returns a Random Move
+            let remainingTiles = [];
             for(let y = 0; y < 3; y++){
                 for(let x = 0; x < 3; x++){
                     if(Model.getTile(x,y) === null){
@@ -151,12 +152,16 @@ import SubPub from './utilities/SubscriberPublisherController.js';
                     }
                 }
             }
-            console.log(remainingTiles);
-            const move = remainingTiles[Math.floor(Math.random()*remainingTiles.length)]
-            Publish('AiMove', move);
+            remainingTiles = remainingTiles
+                .map(value => ({value, sort: Math.random()}))
+                .sort((a,b)=>a.sort-b.sort)
+                .map(({value}) => value);
+            Publish('AiMove', remainingTiles[0]);
         }
         function _makeHardChoice(){
-            const remainingTiles = [];
+            let foundMove = false;
+            let remainingTiles = [];
+            //Grab All Unchosen Tiles
             for(let y = 0; y < 3; y++){
                 for(let x = 0; x < 3; x++){
                     if(Model.getTile(x,y) === null){
@@ -164,6 +169,45 @@ import SubPub from './utilities/SubscriberPublisherController.js';
                     }
                 }
             }
+            //Randomize Order
+            remainingTiles = remainingTiles
+                .map(value => ({value, sort: Math.random()}))
+                .sort((a,b)=>a.sort-b.sort)
+                .map(({value}) => value);
+            //Return An Immediate Win If Possible
+            remainingTiles.forEach(tile => {
+                const [x,y] = tile;
+                Model.setTile(x,y,'O');
+                if(Model.checkForWinner(x,y).value && !foundMove){
+                    Model.setTile(x,y,null);
+                    Publish('AiMove', tile);
+                    foundMove = true;
+                    return;
+                }
+                Model.setTile(x,y,null);
+            })
+            if(foundMove){return;}
+            //Return an Immediate Block to Win If Possible
+            remainingTiles.forEach(tile => {
+                const [x,y] = tile;
+                Model.setTile(x,y,'X');
+                if(Model.checkForWinner(x,y).value && !foundMove){
+                    Model.setTile(x,y,null);
+                    Publish('AiMove', tile);
+                    foundMove = true;
+                    return;
+                }
+                Model.setTile(x,y,null);
+            })
+            if(foundMove){return;}
+            // Return the Center Square If Possible
+            if(Model.getTile(1,1) === null){
+                Publish('AiMove', [1,1]);
+                return;
+            }
+            // Return A Random Move Otherwise (randomized earlier)
+            Publish('AiMove', remainingTiles[0]);
+            return;
         }
     })(Model, Controller)
 })()
